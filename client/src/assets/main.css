@@ -1,0 +1,58 @@
+:root {
+    --bg: #0b1622;
+    --panel: #0f1b2d;
+    --border: #1c2a3a;
+    --text: #e6f0ff;
+    --muted: #9fb3c8;
+    --primary: #58b3ff;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html, body, #app {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.5 system-ui, Segoe UI, Roboto, Helvetica, Arial
+}
+
+a {
+    color: inherit;
+    text-decoration: none
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border)
+}
+
+.btn-primary {
+    border-color: transparent;
+    background: var(--primary);
+    color: #001428
+}
+
+.badge {
+    font-size: 12px;
+    color: var(--muted)
+}

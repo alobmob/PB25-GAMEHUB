@@ -1,13 +1,16 @@
 <template>
-  <header style="padding:12px;border-bottom:1px solid #ddd;display:flex;gap:12px">
-    <router-link to="/">GameHub</router-link>
-    <router-link to="/games">Gry</router-link>
-    <div style="margin-left:auto;display:flex;gap:12px">
-      <router-link to="/login">Logowanie</router-link>
-      <router-link to="/register">Rejestracja</router-link>
+  <header class="site-header">
+    <div class="container nav-container">
+      <router-link to="/" class="nav-logo">gamehub</router-link>
+      <div class="nav-spacer"></div>
+      <div class="nav-actions">
+        <router-link class="btn" to="/login">Logowanie</router-link>
+        <router-link class="btn btn-primary" to="/register">Rejestracja</router-link>
+      </div>
     </div>
   </header>
-  <main style="padding:16px">
-    <router-view/>
+
+  <main class="container">
+    <router-view />
   </main>
 </template>
