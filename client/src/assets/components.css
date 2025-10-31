@@ -1,0 +1,39 @@
+/* topbar */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11, 22, 34, .7);
+    backdrop-filter: saturate(160%) blur(8px);
+    border-bottom: 1px solid var(--border)
+}
+
+.nav-container {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    height: 56px
+}
+
+.nav-logo {
+    font-weight: 800;
+    font-size: 20px;
+    text-transform: lowercase;
+    letter-spacing: .5px
+}
+
+.nav-spacer {
+    flex: 1
+}
+
+.nav-actions {
+    display: flex;
+    gap: 8px
+}
+
+/* grid uzywana na listach na stronie glownej */
+.game-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns:repeat(auto-fill, minmax(180px, 1fr))
+}

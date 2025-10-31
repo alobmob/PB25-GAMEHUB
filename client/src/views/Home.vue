@@ -1,35 +1,25 @@
 <script setup>
-import HomeHero from '../components/home/HomeHero.vue';
 import Section from '../components/home/Section.vue';
 import GameMiniCard from '../components/home/GameMiniCard.vue';
 
-// Tymczasowe dane mock do prezentacji UI.
-// Podmienimy na API w kolejnym etapie.
 const popular = Array.from({length: 6}, (_, i) => ({
-  id: i + 1,
-  title: `Popularna gra #${i + 1}`,
-  ratingAvg: 4.2 - (i * 0.1)
+  id: i + 1, title: `Popularna gra #${i + 1}`, ratingAvg: (4.5 - i * 0.1).toFixed(1)
 }));
-
 const recent = Array.from({length: 6}, (_, i) => ({
-  id: 100 + i + 1,
-  title: `Nowa gra #${i + 1}`,
-  ratingAvg: 4.0 + (i * 0.1)
+  id: 100 + i + 1, title: `Nowa gra #${i + 1}`, ratingAvg: (3.9 + i * 0.1).toFixed(1)
 }));
 </script>
 
 <template>
-  <div style="display:grid;gap:24px">
-    <HomeHero/>
-
+  <div class="home">
     <Section title="Ranking popularnosci">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+      <div class="game-grid">
         <GameMiniCard v-for="g in popular" :key="g.id" :game="g"/>
       </div>
     </Section>
 
     <Section title="Ostatnio dodane">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+      <div class="game-grid">
         <GameMiniCard v-for="g in recent" :key="g.id" :game="g"/>
       </div>
     </Section>
