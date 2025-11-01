@@ -1,19 +1,20 @@
-export function getAllGames(req, res) {
-    res.json({ message: 'Lista gier (placeholder)' });
-}
+import { getAllGames, getGameById } from "../models/query.js";
 
-export function getGameById(req, res) {
-    res.json({ message: `Szczegoly gry ${req.params.id}` });
-}
+export const getGames = async (req, res, next) => {
+  try {
+    const games = await getAllGames();
+    res.json(games);
+  } catch (err) {
+    next(err);
+  }
+};
 
-export function createGame(req, res) {
-    res.json({ message: 'Dodano nowa gre (placeholder)' });
-}
-
-export function updateGame(req, res) {
-    res.json({ message: `Zaktualizowano gre ${req.params.id}` });
-}
-
-export function deleteGame(req, res) {
-    res.json({ message: `Usunieto gre ${req.params.id}` });
-}
+export const getGame = async (req, res, next) => {
+  try {
+    const game = await getGameById(req.params.id);
+    if (!game) return res.status(404).json({ message: "Game not found" });
+    res.json(game);
+  } catch (err) {
+    next(err);
+  }
+};
