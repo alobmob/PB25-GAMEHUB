@@ -1,5 +1,6 @@
 <script setup>
 import {ref, computed} from 'vue';
+import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
@@ -20,7 +21,22 @@ async function onSubmit() {
   if (!formValid.value) return;
   loading.value = true;
   try {
-    // TODO: integracja z API po dodaniu endpointu
+      const res = await axios.post('http://localhost:3000/api/auth/login', {
+          email: email.value,
+          password: password.value
+      });
+
+      //logowanie sie powiod³o
+      console.log('Zalogowano:', res.data);
+
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      alert(`Witaj ${res.data.user.nick || res.data.user.email}!`);
+
+      //przekierowanie na stronê g³ówn¹
+      window.location.href = '/';
+  } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.error || 'Nie uda³o siê zalogowaæ.');
   } finally {
     loading.value = false;
   }
