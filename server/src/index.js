@@ -1,21 +1,17 @@
-import 'dotenv/config';
-import express from 'express';
+import express from "express";
+import dotenv from "dotenv";
+import gamesRouter from "./routes/games.js";
+import { errorHandler } from "./middleware/errors.js";
 import cors from 'cors';
-import morgan from 'morgan';
-import authRoutes from './auth.js';
+
+dotenv.config();
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
-app.use(morgan('dev'));
-app.use('/api/auth', authRoutes);
+app.use("/api/games", gamesRouter);
 
+app.use(errorHandler);
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`API listening on http://localhost:${port}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
