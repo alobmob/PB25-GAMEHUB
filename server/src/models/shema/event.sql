@@ -1,0 +1,20 @@
+--  Log cleaner --
+
+SET GLOBAL event_scheduler = ON;
+
+DELIMITER $$
+
+CREATE EVENT log_cleaner
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP + INTERVAL 1 DAY
+DO
+BEGIN
+
+  DELETE FROM `point_log`
+  WHERE `date` < (CURDATE() - INTERVAL 1 YEAR);
+
+  DELETE FROM `event_log`
+  WHERE `date` < (CURDATE() - INTERVAL 1 YEAR);
+END$$
+
+DELIMITER ;

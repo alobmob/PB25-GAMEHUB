@@ -5,6 +5,7 @@ pnpm-debug.log*
 yarn-debug.log*
 .yarn/*
 .pnpm-store/
+*.log
 
 # Env
 .env
@@ -20,3 +21,8 @@ coverage/
 .DS_Store
 .idea/
 .vscode/
+
+# Visual Studio
+.vs/
+
+
