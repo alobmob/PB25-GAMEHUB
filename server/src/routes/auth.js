@@ -1,6 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import { pool } from './db.js';
+import db from '../models/db_connect.js';
 
 const router = express.Router();
 
@@ -8,25 +8,25 @@ router.post('/register', async (req, res) => {
     const { name, surname, nick, email, password } = req.body;
     try {
         if (!name || !surname || !email || !nick || !password) {
-            return res.status(400).json({ error: 'Wszystkie pola sπ wymagane' });
+            return res.status(400).json({ error: 'Wszystkie pola sƒÖ wymagane' });
         }
         if (password.length < 6) {
-            return res.status(400).json({ error: 'Has≥o musi mieÊ co najmniej 6 znakÛw' })
+            return res.status(400).json({ error: 'Has≈Ço musi miec co najmniej 6 znak√≥w' })
         }
-        const [exist] = await pool.query('SELECT id FROM Users Where email = ?', [email]);
+        const [exist] = await db.query('SELECT id FROM Users Where email = ?', [email]);
         if (exist.length > 0) {
-            return res.status(400).json({ error: 'Ten adres email jest juø zajÍty.' });
+            return res.status(400).json({ error: 'Ten adres email jest ju≈º zajƒôty.' });
         }
-        const [result] = await pool.query(
+        const [result] = await db.query(
             'INSERT INTO Users (name, surname, nick, email, password) Values (?,?,?,?,?)', [name, surname, nick, email, password]);
 
         res.status(201).json({
-            message: 'Konto utworzono pomyúlnie',
+            message: 'Konto utworzono pomy≈õlnie',
             userId: result.insertId
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'B≥πd serwera' }); }
+        res.status(500).json({ error: 'B≈ÇƒÖd serwera' }); }
 
 });
 
@@ -35,23 +35,23 @@ router.post('/login', async (req, res) => {
 
 
     try {
-        const [rows] = await pool.query('SELECT * FROM Users WHERE email = ?', [email]);
+        const [rows] = await db.query('SELECT * FROM Users WHERE email = ?', [email]);
 
         if (rows.length === 0) {
-            return res.status(400).json({ error: 'Nie znaleziono uøytkownika' });
+            return res.status(400).json({ error: 'Nie znaleziono u≈ºytkownika' });
         }
 
         const user = rows[0];
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (password !== user.password) {
-            return res.status(400).json({ error: 'Nieprawid≥owe has≥o' });
+            return res.status(400).json({ error: 'Nieprawid≈Çowe has≈Ço' });
         }
 
-        res.json({ message: 'Zalogowano pomyúlnie', user });
+        res.json({ message: 'Zalogowano pomy≈õlnie', user });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'B≥πd serwera' });
+        res.status(500).json({ error: 'B≈ÇƒÖd serwera' });
     }
 });
 

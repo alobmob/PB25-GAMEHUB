@@ -26,17 +26,17 @@ async function onSubmit() {
           password: password.value
       });
 
-      //logowanie sie powiod³o
+ 
       console.log('Zalogowano:', res.data);
 
       localStorage.setItem('user', JSON.stringify(res.data.user));
       alert(`Witaj ${res.data.user.nick || res.data.user.email}!`);
 
-      //przekierowanie na stronê g³ówn¹
+
       window.location.href = '/';
   } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || 'Nie uda³o siê zalogowaæ.');
+      alert(err.response?.data?.error || 'Nie udaÅ‚o siÄ™ zalogowaÄ‡.');
   } finally {
     loading.value = false;
   }
@@ -53,17 +53,17 @@ async function onSubmit() {
           <label class="label" for="email">Email</label>
           <input id="email" class="input" type="email" v-model.trim="email" @blur="blurField('email')"
                  placeholder="name@example.com"/>
-          <p v-if="touched.email && !emailValid" class="error">Podaj prawidlowy email</p>
+          <p v-if="touched.email && !emailValid" class="error">Podaj prawidÅ‚owy email</p>
         </div>
 
         <div class="field">
           <div class="row">
-            <label class="label" for="password">Haslo</label>
+            <label class="label" for="password">HasÅ‚o</label>
             <button type="button" class="link" @click="show=!show">{{ show ? 'ukryj' : 'pokaz' }}</button>
           </div>
           <input id="password" class="input" :type="show ? 'text' : 'password'" v-model="password"
                  @blur="blurField('password')" placeholder="co najmniej 6 znakow"/>
-          <p v-if="touched.password && !passValid" class="error">Haslo musi miec min. 6 znakow</p>
+          <p v-if="touched.password && !passValid" class="error">Haslo musi mieÄ‡ min. 6 znakow</p>
         </div>
 
         <div class="actions">
