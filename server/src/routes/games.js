@@ -1,9 +1,9 @@
 import express from "express";
-import { getGames, getGame } from "../controllers/gamesController.js";
+import { getPopularGames, getRecentGames } from "../models/query.js";
 
 const router = express.Router();
 
-router.get("/", getGames);
-router.get("/:id", getGame);
+router.get("/popular", getPopularGames);
+router.get("/recent", getRecentGames);
 
 export default router;

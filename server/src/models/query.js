@@ -1,11 +1,38 @@
-import db from "./db_connect.js";
+import pool from '../models/db_connect.js'; 
 
-export const getAllGames = async () => {
-  const [rows] = await db.query("SELECT * FROM games");
-  return rows;
+
+export const getPopularGames = async (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 6;
+  const sql = `
+    SELECT id, title, 
+           COALESCE(points, 0) AS ratingAvg
+    FROM \`Game\`
+    ORDER BY points DESC, total_votes DESC
+    LIMIT ?;
+  `;
+  try {
+    const [rows] = await pool.query(sql, [limit]);
+    res.json(rows);
+  } catch (err) {
+    console.error('getPopularGames error:', err);
+    res.status(500).json({ error: err.message });
+  }
 };
 
-export const getGameById = async (id) => {
-  const [rows] = await db.query("SELECT * FROM games WHERE id = ?", [id]);
-  return rows[0];
+export const getRecentGames = async (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 6;
+  const sql = `
+    SELECT id, title, 
+           COALESCE(points, 0) AS ratingAvg
+    FROM \`Game\`
+    ORDER BY release_date DESC, id DESC
+    LIMIT ?;
+  `;
+  try {
+    const [rows] = await pool.query(sql, [limit]);
+    res.json(rows);
+  } catch (err) {
+    console.error('getRecentGames error:', err);
+    res.status(500).json({ error: err.message });
+  }
 };
