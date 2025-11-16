@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import db from '../models/db_connect.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -47,8 +48,17 @@ router.post('/login', async (req, res) => {
         if (password !== user.password) {
             return res.status(400).json({ error: 'Nieprawidłowe hasło' });
         }
+        const token = jwt.sign(
+            { id: user.id, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h' }
+        );
 
-        res.json({ message: 'Zalogowano pomyślnie', user });
+        res.json({
+            message: 'Zalogowano pomyślnie',
+            token,
+            user: { id: user.id, nick: user.nick, email: user.email, role: user.role }
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Błąd serwera' });
