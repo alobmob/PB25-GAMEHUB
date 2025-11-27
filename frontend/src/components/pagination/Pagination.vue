@@ -1,98 +1,99 @@
 <script setup>
 import { computed } from 'vue'
-import Button from '../ui/Button.vue'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-vue-next'
+import Button from '../ui/Button.vue'
 
 const props = defineProps({
-  currentPage: { type: Number, required: true },
-  totalPages: { type: Number, required: true }
+  currentPage: {
+    type: Number,
+    required: true
+  },
+  totalPages: {
+    type: Number,
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:currentPage'])
 
 const pages = computed(() => {
-  const total = props.totalPages
-  const current = props.currentPage
-  if (total <= 7) return [...Array(total)].map((_, i) => i + 1)
+  const result = []
 
-  if (current <= 4)
-    return [1, 2, 3, 4, 5, 'ellipsis-right', total]
+  if (props.totalPages <= 7) {
+    for (let i = 1; i <= props.totalPages; i++) result.push(i)
+  } else {
+    result.push(1)
 
-  if (current >= total - 3)
-    return [1, 'ellipsis-left', total - 4, total - 3, total - 2, total - 1, total]
+    if (props.currentPage > 3) result.push('...')
 
-  return [
-    1,
-    'ellipsis-left',
-    current - 1,
-    current,
-    current + 1,
-    'ellipsis-right',
-    total
-  ]
+    const start = Math.max(2, props.currentPage - 1)
+    const end = Math.min(props.totalPages - 1, props.currentPage + 1)
+
+    for (let i = start; i <= end; i++) result.push(i)
+
+    if (props.currentPage < props.totalPages - 2) result.push('...')
+
+    result.push(props.totalPages)
+  }
+
+  return result
 })
 
-function select(page) {
-  if (typeof page === 'number') emit('update:currentPage', page)
-}
-
-function prev() {
-  if (props.currentPage > 1) emit('update:currentPage', props.currentPage - 1)
-}
-
-function next() {
-  if (props.currentPage < props.totalPages)
-    emit('update:currentPage', props.currentPage + 1)
+const setPage = (page) => {
+  if (page !== '...' && page >= 1 && page <= props.totalPages) {
+    emit('update:currentPage', page)
+  }
 }
 </script>
 
 <template>
-  <nav class="mx-auto flex w-full justify-center">
-    <ul class="flex flex-row items-center gap-1">
+  <nav class="flex justify-center">
+    <ul class="flex items-center gap-2">
       <li>
         <Button
             variant="ghost"
-            size="default"
-            class="gap-1 px-2.5"
-            :disabled="currentPage === 1"
-            @click="prev"
+            size="icon"
+            :disabled="props.currentPage === 1"
+            @click="setPage(props.currentPage - 1)"
         >
-          <ChevronLeft class="size-4" />
-          <span class="hidden sm:block">Previous</span>
+          <ChevronLeft class="w-4 h-4" />
         </Button>
       </li>
 
-      <li v-for="(page, i) in pages" :key="i">
-        <template v-if="page === 'ellipsis-left' || page === 'ellipsis-right'">
-          <span class="flex size-9 items-center justify-center">
-            <MoreHorizontal class="size-4" />
-          </span>
-        </template>
+      <li v-for="page in pages" :key="page">
+        <span
+            v-if="page === '...'"
+            class="px-3 text-gray-500"
+        >
+          <MoreHorizontal class="w-4 h-4" />
+        </span>
 
-        <template v-else>
-          <Button
-              :variant="page === currentPage ? 'outline' : 'ghost'"
-              size="icon"
-              class="h-9 w-9"
-              @click="select(page)"
-          >
-            {{ page }}
-          </Button>
-        </template>
+        <Button
+            v-else
+            :variant="page === props.currentPage ? 'outline' : 'ghost'"
+            size="icon"
+            @click="setPage(page)"
+        >
+          {{ page }}
+        </Button>
       </li>
 
       <li>
         <Button
             variant="ghost"
-            size="default"
-            class="gap-1 px-2.5"
-            :disabled="currentPage === totalPages"
-            @click="next"
+            size="icon"
+            :disabled="props.currentPage === props.totalPages"
+            @click="setPage(props.currentPage + 1)"
         >
-          <span class="hidden sm:block">Next</span>
-          <ChevronRight class="size-4" />
+          <ChevronRight class="w-4 h-4" />
         </Button>
       </li>
     </ul>
   </nav>
 </template>
+
+<style scoped>
+ul li button[variant="outline"] {
+  font-weight: 600;
+}
+</style>

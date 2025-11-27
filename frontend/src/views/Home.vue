@@ -9,31 +9,9 @@ import SelectContent from '../components/ui/select/SelectContent.vue'
 import SelectItem from '../components/ui/select/SelectItem.vue'
 import SelectValue from '../components/ui/select/SelectValue.vue'
 import Label from '../components/ui/Label.vue'
+import { mockGames } from '../utils/mockData'
 
-const allGames = ref([
-  {
-    id: 1,
-    title: 'The Witcher 3',
-    coverImage: 'https://placehold.co/400x600',
-    averageRating: 4.9,
-    ratingsCount: 84211,
-    genres: ['RPG', 'Adventure'],
-    platforms: ['PC', 'PlayStation'],
-    releaseYear: 2015,
-    popularityScore: 99
-  },
-  {
-    id: 2,
-    title: 'Cyberpunk 2077',
-    coverImage: 'https://placehold.co/400x600',
-    averageRating: 4.6,
-    ratingsCount: 25123,
-    genres: ['RPG', 'Action'],
-    platforms: ['PC'],
-    releaseYear: 2020,
-    popularityScore: 98
-  }
-])
+const allGames = ref(mockGames)
 
 const selectedGenres = ref([])
 const selectedPlatforms = ref([])
@@ -155,7 +133,9 @@ const paginatedGames = computed(() =>
           </div>
 
           <div v-else class="text-center py-12">
-            <p class="text-gray-500">Nie znaleziono gier spełniających kryteria</p>
+            <p class="text-gray-500">
+              Nie znaleziono gier spełniających kryteria
+            </p>
           </div>
 
           <div v-if="totalPages > 1" class="pt-8">
