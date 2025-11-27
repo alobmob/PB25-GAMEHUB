@@ -50,16 +50,11 @@ const filteredAndSortedGames = computed(() => {
 
   filtered.sort((a, b) => {
     switch (sortBy.value) {
-      case 'popularity':
-        return b.popularityScore - a.popularityScore
-      case 'rating':
-        return b.averageRating - a.averageRating
-      case 'year-desc':
-        return b.releaseYear - a.releaseYear
-      case 'year-asc':
-        return a.releaseYear - b.releaseYear
-      default:
-        return 0
+      case 'popularity': return b.popularityScore - a.popularityScore
+      case 'rating': return b.averageRating - a.averageRating
+      case 'year-desc': return b.releaseYear - a.releaseYear
+      case 'year-asc': return a.releaseYear - b.releaseYear
+      default: return 0
     }
   })
 
@@ -80,7 +75,7 @@ const paginatedGames = computed(() =>
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <div class="gh-container mx-auto px-4 py-8">
+    <div class="gh-container px-4 py-8">
       <div class="mb-8">
         <h1 class="mb-2">Katalog gier</h1>
         <p class="text-gray-600">
@@ -98,7 +93,7 @@ const paginatedGames = computed(() =>
           />
         </aside>
 
-        <main class="flex-1 max-w-[900px] space-y-6">
+        <main class="flex-1 space-y-6">
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600">
               Znaleziono {{ filteredAndSortedGames.length }}
@@ -133,9 +128,7 @@ const paginatedGames = computed(() =>
           </div>
 
           <div v-else class="text-center py-12">
-            <p class="text-gray-500">
-              Nie znaleziono gier spełniających kryteria
-            </p>
+            <p class="text-gray-500">Nie znaleziono gier spełniających kryteria</p>
           </div>
 
           <div v-if="totalPages > 1" class="pt-8">
