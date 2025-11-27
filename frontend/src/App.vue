@@ -21,8 +21,10 @@ function logout() {
 </script>
 
 <template>
-  <Navbar :isLoggedIn="!!user" />
-  <main class="gh-container">
-    <router-view />
-  </main>
+  <div>
+    <Navbar />
+    <main class="pt-16">
+      <RouterView />
+    </main>
+  </div>
 </template>

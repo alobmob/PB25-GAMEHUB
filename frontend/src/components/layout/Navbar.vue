@@ -16,7 +16,7 @@ const isActive = (path) => route.path === path
 </script>
 
 <template>
-  <nav class="border-b bg-white sticky top-0 z-50">
+  <nav class="border-b bg-white fixed top-0 left-0 w-full z-50">
     <div class="container mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-8">
         <RouterLink to="/" class="flex items-center gap-2">
