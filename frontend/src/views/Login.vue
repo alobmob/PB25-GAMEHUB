@@ -1,78 +1,79 @@
 <script setup>
-import {ref, computed} from 'vue';
-import axios from 'axios';
+import { ref } from 'vue'
+import Card from '../components/ui/card/Card.vue'
+import CardHeader from '../components/ui/card/CardHeader.vue'
+import CardTitle from '../components/ui/card/CardTitle.vue'
+import CardDescription from '../components/ui/card/CardDescription.vue'
+import CardContent from '../components/ui/card/CardContent.vue'
+import Label from '../components/ui/Label.vue'
+import Input from '../components/ui/Input.vue'
+import Button from '../components/ui/Button.vue'
+import { Gamepad2 } from 'lucide-vue-next'
 
-const email = ref('');
-const password = ref('');
-const show = ref(false);
-const loading = ref(false);
-const touched = ref({email: false, password: false});
+const email = ref('')
+const password = ref('')
 
-const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
-const passValid = computed(() => password.value.length >= 6);
-const formValid = computed(() => emailValid.value && passValid.value);
-
-function blurField(k) {
-  touched.value[k] = true;
-}
-
-async function onSubmit() {
-  touched.value = {email: true, password: true};
-  if (!formValid.value) return;
-  loading.value = true;
-  try {
-      const res = await axios.post('http://localhost:3000/api/auth/login', {
-          email: email.value,
-          password: password.value
-      });
-
- 
-      console.log('Zalogowano:', res.data);
-
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      alert(`Witaj ${res.data.user.nick || res.data.user.email}!`);
-
-
-      window.location.href = '/';
-  } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.error || 'Nie udało się zalogować.');
-  } finally {
-    loading.value = false;
+const handleSubmit = () => {
+  if (!email.value || !password.value) {
+    alert('Wypełnij wszystkie pola')
+    return
   }
+
+  alert('Zalogowano pomyślnie!')
 }
 </script>
 
 <template>
-  <div class="auth-wrap">
-    <div class="card auth-card">
-      <h1>Logowanie</h1>
-
-      <form class="form" @submit.prevent="onSubmit">
-        <div class="field">
-          <label class="label" for="email">Email</label>
-          <input id="email" class="input" type="email" v-model.trim="email" @blur="blurField('email')"
-                 placeholder="name@example.com"/>
-          <p v-if="touched.email && !emailValid" class="error">Podaj prawidłowy email</p>
-        </div>
-
-        <div class="field">
-          <div class="row">
-            <label class="label" for="password">Hasło</label>
-            <button type="button" class="link" @click="show=!show">{{ show ? 'ukryj' : 'pokaz' }}</button>
+  <!-- LOGIN WYSOKOŚĆ = 100VH MINUS NAVBAR (4rem = h-16) -->
+  <div class="h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
+    <Card class="w-full max-w-md">
+      <CardHeader class="text-center">
+        <div class="flex justify-center mb-4">
+          <div class="bg-primary p-3 rounded-full">
+            <Gamepad2 class="w-8 h-8 text-primary-foreground" />
           </div>
-          <input id="password" class="input" :type="show ? 'text' : 'password'" v-model="password"
-                 @blur="blurField('password')" placeholder="co najmniej 6 znakow"/>
-          <p v-if="touched.password && !passValid" class="error">Haslo musi mieć min. 6 znakow</p>
         </div>
 
-        <div class="actions">
-          <router-link to="/register" class="link">Nie masz konta? Rejestracja</router-link>
-          <button class="btn btn-primary" :disabled="!formValid || loading" type="submit">
-            {{ loading ? 'Logowanie...' : 'Zaloguj' }}
-          </button>
-        </div>
-      </form>
-    </div>
+        <CardTitle>Zaloguj się</CardTitle>
+        <CardDescription>
+          Wprowadź swoje dane, aby uzyskać dostęp do konta
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <form @submit.prevent="handleSubmit" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="email">Adres e-mail</Label>
+            <Input
+                id="email"
+                type="email"
+                v-model="email"
+                placeholder="twoj@email.pl"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label for="password">Hasło</Label>
+            <Input
+                id="password"
+                type="password"
+                v-model="password"
+                placeholder="••••••••"
+            />
+          </div>
+
+          <Button type="submit" class="w-full">
+            Zaloguj się
+          </Button>
+
+          <div class="text-center text-sm">
+            <span class="text-gray-600">Nie masz konta? </span>
+            <RouterLink to="/register" class="text-primary hover:underline">
+              Zarejestruj się
+            </RouterLink>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   </div>
 </template>
