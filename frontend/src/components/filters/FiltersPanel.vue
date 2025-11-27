@@ -1,8 +1,8 @@
 <script setup>
-import Card from '../ui/Card.vue'
-import CardHeader from '../ui/CardHeader.vue'
-import CardContent from '../ui/CardContent.vue'
-import CardTitle from '../ui/CardTitle.vue'
+import Card from '../ui/card/Card.vue'
+import CardHeader from '../ui/card/CardHeader.vue'
+import CardContent from '../ui/card/CardContent.vue'
+import CardTitle from '../ui/card/CardTitle.vue'
 
 import Label from '../ui/Label.vue'
 import Select from '../ui/select/Select.vue'

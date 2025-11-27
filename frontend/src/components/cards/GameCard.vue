@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import Card from '../ui/Card.vue'
-import CardContent from '../ui/CardContent.vue'
+import Card from '../ui/card/Card.vue'
+import CardContent from '../ui/card/CardContent.vue'
 import Badge from '../ui/Badge.vue'
 import ImageWithFallback from '../ui/ImageWithFallback.vue'
 import { Star } from 'lucide-vue-next'
