@@ -2,8 +2,8 @@
 
 <template>
   <div
-      data-slot="card-content"
-      class="px-6 last:pb-6"
+      data-slot="card-footer"
+      class="flex items-center px-6 pb-6"
   >
     <slot></slot>
   </div>
