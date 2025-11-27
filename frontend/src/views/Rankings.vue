@@ -53,7 +53,7 @@ const getMedalBg = (position) => {
 
         <div class="space-y-4">
           <div v-for="(game, index) in topGames" :key="game.id">
-            <RouterLink :to="`/games/${game.id}`">
+            <RouterLink :to="`/game/${game.id}`">
               <Card
                   :class="`${getMedalBg(index + 1)} border-2 hover:shadow-lg transition-all cursor-pointer`"
               >

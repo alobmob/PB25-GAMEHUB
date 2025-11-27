@@ -9,7 +9,7 @@ import Profile from '../views/Profile.vue'
 
 const routes = [
     { path: '/', name: 'home', component: Home },
-    { path: '/games/:id', name: 'game-details', component: GameDetails, props: true },
+    { path: '/game/:id', name: 'game-details', component: GameDetails, props: true },
     { path: '/rankings', name: 'rankings', component: Rankings },
     { path: '/profile', name: 'profile', component: Profile },
     { path: '/login', name: 'login', component: Login },
