@@ -15,7 +15,7 @@ defineProps({
 </script>
 
 <template>
-  <RouterLink :to="`/game/${game.id}`">
+  <RouterLink :to="`/games/${game.id}`">
     <Card class="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
       <div class="aspect-[2/3] relative overflow-hidden bg-gray-100">
         <ImageWithFallback
