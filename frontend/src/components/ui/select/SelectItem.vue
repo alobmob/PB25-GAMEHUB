@@ -1,33 +1,49 @@
 <script setup>
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
 
-const value = inject('selectValue')
+const selectValue = inject('selectValue')
 const setValue = inject('selectSetValue')
 
 const props = defineProps({
-  value: String,
+  value: {
+    type: String,
+    required: true
+  },
   class: {
     type: String,
     default: ''
   }
 })
+
+const isSelected = computed(() => selectValue.value === props.value)
+
+const onClick = () => {
+  setValue(props.value)
+}
 </script>
 
 <template>
   <div
       data-slot="select-item"
       :class="[
-      'flex items-center gap-2 rounded-sm py-1.5 px-2 pr-8 text-sm cursor-pointer select-none transition',
+      'relative flex w-full cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm select-none transition',
       'hover:bg-accent hover:text-accent-foreground',
+      'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       props.class
     ]"
-      @click="setValue(props.value)"
+      @click="onClick"
   >
-    <div class="flex items-center justify-center size-3.5 absolute right-2">
-      <svg v-if="value === props.value" class="size-4" viewBox="0 0 24 24">
-        <path d="M5 12l5 5l10 -10" stroke="currentColor" fill="none"/>
+    <span class="absolute right-2 flex size-3.5 items-center justify-center">
+      <svg
+          v-if="isSelected"
+          class="size-4"
+          viewBox="0 0 24 24"
+      >
+        <path d="M5 12l5 5l10-10" stroke="currentColor" fill="none" />
       </svg>
-    </div>
-    <span>{{ props.value }}</span>
+    </span>
+    <span>
+      <slot>{{ props.value }}</slot>
+    </span>
   </div>
 </template>

@@ -17,35 +17,63 @@ import Button from '../ui/Button.vue'
 import { genres, platforms } from '../../utils/mockData'
 
 const props = defineProps({
-  selectedGenres: { type: Array, required: true },
-  selectedPlatforms: { type: Array, required: true },
-  selectedYear: { type: String, required: true },
-  onGenresChange: { type: Function, required: true },
-  onPlatformsChange: { type: Function, required: true },
-  onYearChange: { type: Function, required: true },
-  onReset: { type: Function, required: true }
+  genres: {
+    type: Array,
+    default: () => []
+  },
+  platforms: {
+    type: Array,
+    default: () => []
+  },
+  year: {
+    type: String,
+    default: 'Wszystkie'
+  }
 })
+
+const emit = defineEmits(['update:genres', 'update:platforms', 'update:year', 'reset'])
 
 const years = [
   'Wszystkie',
-  '2023', '2022', '2021', '2020', '2019',
-  '2018', '2017', '2016', '2015'
+  '2023',
+  '2022',
+  '2021',
+  '2020',
+  '2019',
+  '2018',
+  '2017',
+  '2016',
+  '2015'
 ]
 
-function toggleGenre(genre) {
-  if (props.selectedGenres.includes(genre)) {
-    props.onGenresChange(props.selectedGenres.filter(g => g !== genre))
+const toggleGenre = (genre) => {
+  if (props.genres.includes(genre)) {
+    emit(
+        'update:genres',
+        props.genres.filter((g) => g !== genre)
+    )
   } else {
-    props.onGenresChange([...props.selectedGenres, genre])
+    emit('update:genres', [...props.genres, genre])
   }
 }
 
-function togglePlatform(platform) {
-  if (props.selectedPlatforms.includes(platform)) {
-    props.onPlatformsChange(props.selectedPlatforms.filter(p => p !== platform))
+const togglePlatform = (platform) => {
+  if (props.platforms.includes(platform)) {
+    emit(
+        'update:platforms',
+        props.platforms.filter((p) => p !== platform)
+    )
   } else {
-    props.onPlatformsChange([...props.selectedPlatforms, platform])
+    emit('update:platforms', [...props.platforms, platform])
   }
+}
+
+const onYearChange = (value) => {
+  emit('update:year', value)
+}
+
+const onReset = () => {
+  emit('reset')
 }
 </script>
 
@@ -54,27 +82,28 @@ function togglePlatform(platform) {
     <CardHeader>
       <div class="flex items-center justify-between">
         <CardTitle>Filtry</CardTitle>
-        <Button variant="ghost" size="sm" @click="props.onReset">
+        <Button variant="ghost" size="sm" @click="onReset">
           Wyczyść
         </Button>
       </div>
     </CardHeader>
 
     <CardContent class="space-y-6">
-
       <div class="space-y-2">
         <Label>Rok wydania</Label>
-        <Select :modelValue="props.selectedYear" @update:modelValue="props.onYearChange">
+        <Select :modelValue="year" @update:modelValue="onYearChange">
           <SelectTrigger>
-            <SelectValue placeholder="Wybierz rok" />
+            <SelectValue placeholder="Wybierz rok">
+              {{ year || 'Wybierz rok' }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem
-                v-for="year in years"
-                :key="year"
-                :value="year"
+                v-for="y in years"
+                :key="y"
+                :value="y"
             >
-              {{ year }}
+              {{ y }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -89,10 +118,10 @@ function togglePlatform(platform) {
               class="flex items-center space-x-2"
           >
             <Checkbox
-                :modelValue="props.selectedGenres.includes(genre)"
+                :modelValue="props.genres.includes(genre)"
                 @update:modelValue="() => toggleGenre(genre)"
             />
-            <label class="text-sm cursor-pointer">
+            <label class="text-sm cursor-pointer leading-none">
               {{ genre }}
             </label>
           </div>
@@ -108,16 +137,15 @@ function togglePlatform(platform) {
               class="flex items-center space-x-2"
           >
             <Checkbox
-                :modelValue="props.selectedPlatforms.includes(platform)"
+                :modelValue="props.platforms.includes(platform)"
                 @update:modelValue="() => togglePlatform(platform)"
             />
-            <label class="text-sm cursor-pointer">
+            <label class="text-sm cursor-pointer leading-none">
               {{ platform }}
             </label>
           </div>
         </div>
       </div>
-
     </CardContent>
   </Card>
 </template>

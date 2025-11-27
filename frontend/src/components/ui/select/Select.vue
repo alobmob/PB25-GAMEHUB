@@ -1,20 +1,31 @@
 <script setup>
-import { ref, provide } from 'vue'
+import { computed, provide, ref } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ''
+  }
+})
+
+const emit = defineEmits(['update:modelValue'])
 
 const open = ref(false)
 
-const props = defineProps({
-  modelValue: String
-})
-const emit = defineEmits(['update:modelValue'])
+const value = computed(() => props.modelValue)
 
-provide('selectValue', props.modelValue)
-provide('selectSetValue', (val) => emit('update:modelValue', val))
+const setValue = (val) => {
+  emit('update:modelValue', val)
+  open.value = false
+}
+
 provide('selectOpen', open)
+provide('selectValue', value)
+provide('selectSetValue', setValue)
 </script>
 
 <template>
-  <div data-slot="select">
+  <div data-slot="select" class="relative">
     <slot />
   </div>
 </template>
