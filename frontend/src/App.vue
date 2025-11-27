@@ -21,7 +21,6 @@ function logout() {
 </script>
 
 <template>
-  <div class="h-10 bg-red-500"></div>
   <Navbar :isLoggedIn="!!user" />
   <main class="container">
     <router-view />
