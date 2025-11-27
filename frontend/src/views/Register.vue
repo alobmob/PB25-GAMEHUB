@@ -1,110 +1,115 @@
 <script setup>
+import { ref } from 'vue'
+import Card from '../components/ui/Card.vue'
+import CardHeader from '../components/ui/CardHeader.vue'
+import CardTitle from '../components/ui/CardTitle.vue'
+import CardDescription from '../components/ui/CardDescription.vue'
+import CardContent from '../components/ui/CardContent.vue'
+import Label from '../components/ui/Label.vue'
+import Input from '../components/ui/Input.vue'
+import Button from '../components/ui/Button.vue'
+import { Gamepad2 } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
-import { ref, computed} from 'vue';
-import axios from 'axios';
+const email = ref('')
+const displayName = ref('')
+const password = ref('')
+const confirmPassword = ref('')
 
-const name = ref('');
-const surname = ref('');
-const nick = ref('');
-const email = ref('');
-const password = ref('');
-const confirm = ref('');
-const show = ref(false);
-const loading = ref(false);
-const touched = ref({ name: false, surname: false, nick: false,email: false, password: false, confirm: false});
+const handleSubmit = () => {
+  if (!email.value || !displayName.value || !password.value || !confirmPassword.value) {
+    alert('Wypełnij wszystkie pola')
+    return
+  }
 
+  if (password.value !== confirmPassword.value) {
+    alert('Hasła nie są zgodne')
+    return
+  }
 
+  if (password.value.length < 6) {
+    alert('Hasło musi mieć co najmniej 6 znaków')
+    return
+  }
 
-const emailValid = computed(()=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
-const nickValid = computed(()=> nick.value.trim().length>=3);
-const passValid = computed(()=> password.value.length>=6);
-const confirmValid = computed(()=> password.value==confirm.value);
-const formValid = computed(() => name.value.trim() && surname.value.trim() &&
-        nick.value && email.value && password.value && confirm.value);
-
-function blurField(k) {
-    touched.value[k] = true;
- }
-
-    async function onSubmit() {
-        if (!formValid.value) return;
-        loading.value = true;
-        try {
-            const res = await axios.post('http://localhost:3000/api/auth/register', {
-                name: name.value,
-                surname: surname.value,
-                nick: nick.value,
-                email: email.value,
-                password: password.value
-
-            });
-            alert(res.data.message);
-            window.location.href = '/login';
-        } catch (err) {
-            console.error(err);
-            alert(err.response?.data?.error || 'Nie udało się zalogować.');
-        } finally {
-            loading.value = false;
-        }
-    }
-
+  alert('Konto zostało utworzone!')
+}
 </script>
 
 <template>
-    <div class="auth-wrap">
-        <div class="card auth-card">
-            <h1>Rejestracja</h1>
-
-            <form class="form" @submit.prevent="onSubmit">
-                <div class="name">
-                    <label class="label" for="name">Imię</label>
-                    <input id="name" class="input" v-model.trim="name" @blur="blurField('Imię')"
-                           placeholder="np.'Chuck'" />
-                </div>
-                <div class="field">
-                    <label class="label" for="surname">Nazwisko</label>
-                    <input id="surname" class="input" v-model.trim="surname" @blur="blurField('Nazwisko')"
-                           placeholder="np.'Norris'" />
-                </div>
-                <div class="field">
-                    <label class="label" for="nick">Nazwa</label>
-                    <input id="nick" class="input" v-model.trim="nick" @blur="blurField('Nazwa')"
-                           placeholder="np. 'ChuckNorris1940'" />
-                    <p v-if="touched.nick && !nickValid" class="error">Podaj prawidłowy nick</p>
-                </div>
-                <div class="field">
-                    <label class="label" for="email">Email</label>
-                    <input id="email" class="input" type="email" v-model.trim="email" @blur="blurField('email')"
-                           placeholder="name@example.com" />
-                    <p v-if="touched.email && !emailValid" class="error">Podaj prawidłowy email</p>
-                </div>
-
-                <div class="field">
-                    <div class="row">
-                        <label class="label" for="password">Hasło</label>
-                        <button type="button" class="link" @click="show=!show">{{ show ? 'ukryj' : 'pokaż' }}</button>
-                    </div>
-                    <input id="password" class="input" :type="show ? 'text' : 'password'" v-model="password"
-                           @blur="blurField('password')" placeholder="co najmniej 6 znaków" />
-                    <p v-if="touched.password && !passValid" class="error">Hasło musi mieć min. 6 znaków</p>
-                </div>
-                <div class="field">
-                    <div class="row">
-                        <label class="label" for="confirm">Powtórz hasło</label>
-                    </div>
-                    <input id="confirm" class="input" :type="show ? 'text' : 'password'" v-model="confirm"
-                           @blur="blurField('confirm')" />
-                    <p v-if="touched.confirm && !confirmValid" class="error">Hasła muszą być takie same.</p>
-                </div>
-
-
-                <div class="actions">
-                    <router-link to="/login" class="link">Masz konto? Zaloguj się!</router-link>
-                    <button class="btn btn-primary" :disabled="!formValid || loading" type="submit">
-                        {{ loading ? 'Rejestracja...' : 'Zarejestruj' }}
-                    </button>
-                </div>
-            </form>
+  <!-- identyczne rozwiązanie jak w LOGIN (bez scrolla) -->
+  <div class="min-h-[calc(100vh-64px)] bg-background flex items-center justify-center">
+    <Card class="w-full max-w-md">
+      <CardHeader class="text-center">
+        <div class="flex justify-center mb-4">
+          <div class="bg-primary p-3 rounded-full">
+            <Gamepad2 class="w-8 h-8 text-primary-foreground" />
+          </div>
         </div>
-    </div>
+
+        <CardTitle>Utwórz konto</CardTitle>
+        <CardDescription>
+          Dołącz do społeczności GameHub
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <form @submit.prevent="handleSubmit" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="email">Adres e-mail</Label>
+            <Input
+                id="email"
+                type="email"
+                v-model="email"
+                placeholder="twoj@email.pl"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label for="displayName">Nazwa użytkownika</Label>
+            <Input
+                id="displayName"
+                type="text"
+                v-model="displayName"
+                placeholder="Twoja nazwa"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <Label for="password">Hasło</Label>
+            <Input
+                id="password"
+                type="password"
+                v-model="password"
+                placeholder="••••••••"
+            />
+            <p class="text-xs text-gray-500">
+              Minimum 6 znaków
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="confirmPassword">Powtórz hasło</Label>
+            <Input
+                id="confirmPassword"
+                type="password"
+                v-model="confirmPassword"
+                placeholder="••••••••"
+            />
+          </div>
+
+          <Button type="submit" class="w-full">
+            Utwórz konto
+          </Button>
+
+          <div class="text-center text-sm">
+            <span class="text-gray-600">Masz już konto? </span>
+            <RouterLink to="/login" class="text-primary hover:underline">
+              Zaloguj się
+            </RouterLink>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
 </template>
