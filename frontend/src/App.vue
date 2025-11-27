@@ -22,7 +22,7 @@ function logout() {
 
 <template>
   <Navbar :isLoggedIn="!!user" />
-  <main class="container">
+  <main class="gh-container">
     <router-view />
   </main>
 </template>
