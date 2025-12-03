@@ -30,21 +30,43 @@ onMounted(async () => {
   try {
     const res = await fetch('http://localhost:3000/api/games')
     const data = await res.json()
-  
-    allGames.value = data.map(game => ({
-  ...game,
-  releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : null,
-  genres: game.genres ? JSON.parse(game.genres) : [],
-  platforms: game.platforms ? JSON.parse(game.platforms) : [],
-  popularityScore: game.points || 0,
-  averageRating: game.points || 0
-}));
+
+ allGames.value = data.map(game => {
+  const tags = Array.isArray(game.tags) ? game.tags : [];
+  const ratings = Array.isArray(game.ratings) ? game.ratings : [];
+
+  // Liczymy średnią ratingów na froncie, jeśli backend nie zwraca averageRating
+  const averageRating = ratings.length
+    ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+    : 0;
+
+  return {
+    id: game.id,
+    title: game.title,
+    slug: game.slug,
+    description: game.description,
+    releaseYear: game.releaseYear,
+    coverImage: game.coverUrl,
+    averageRating: Number(game.averageRating ?? averageRating), // używamy backendowej lub liczmy sami
+    ratingsCount: ratings.length,
+    ratings, // <-- dodajemy opinie
+    popularityScore: game.popularityScore || 0,
+    tags,
+    genres: tags.filter(tag =>
+      ['RPG','Akcja','Przygodowa','Strategiczna','Symulacyjna','Platformowa','Indie','Sandbox','Survivalowa','Hack and Slash','Western','Souls-like','Eksploracjna'].includes(tag)
+    ),
+    platforms: tags.filter(tag =>
+      ['PC','PlayStation 5','PlayStation 4','Xbox Series X','Xbox One','Nintendo Switch','Mobile'].includes(tag)
+    )
+  }
+});
+    console.log('Pobrane gry:', allGames.value)
   } catch (err) {
     console.error('Błąd pobierania gier:', err)
   }
 })
 
-// Filtrowanie i sortowanie
+// Filtrowanie i sortowanie (muszą być na poziomie skryptu, nie w onMounted)
 const filteredAndSortedGames = computed(() => {
   let filtered = [...allGames.value]
 
@@ -66,8 +88,8 @@ const filteredAndSortedGames = computed(() => {
 
   filtered.sort((a, b) => {
     switch (sortBy.value) {
-      case 'popularity': return (b.points || 0) - (a.points || 0)
-      case 'rating': return (b.points || 0) - (a.points || 0) // jeśli masz średnią ocenę
+      case 'popularity': return (b.popularityScore || 0) - (a.popularityScore || 0)
+      case 'rating': return (b.averageRating || 0) - (a.averageRating || 0)
       case 'year-desc': return b.releaseYear - a.releaseYear
       case 'year-asc': return a.releaseYear - b.releaseYear
       default: return 0
