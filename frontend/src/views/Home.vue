@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import FiltersPanel from '../components/filters/FiltersPanel.vue'
 import GameCard from '../components/cards/GameCard.vue'
 import Pagination from '../components/pagination/Pagination.vue'
@@ -9,16 +9,15 @@ import SelectContent from '../components/ui/select/SelectContent.vue'
 import SelectItem from '../components/ui/select/SelectItem.vue'
 import SelectValue from '../components/ui/select/SelectValue.vue'
 import Label from '../components/ui/Label.vue'
-import { mockGames } from '../utils/mockData'
 
-const allGames = ref(mockGames)
+const allGames = ref([])
 
 const selectedGenres = ref([])
 const selectedPlatforms = ref([])
 const selectedYear = ref('Wszystkie')
 const sortBy = ref('popularity')
 const currentPage = ref(1)
-const itemsPerPage = 9
+const itemsPerPage = ref(9)
 
 const resetFilters = () => {
   selectedGenres.value = []
@@ -27,31 +26,48 @@ const resetFilters = () => {
   currentPage.value = 1
 }
 
+onMounted(async () => {
+  try {
+    const res = await fetch('http://localhost:3000/api/games')
+    const data = await res.json()
+  
+    allGames.value = data.map(game => ({
+  ...game,
+  releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : null,
+  genres: game.genres ? JSON.parse(game.genres) : [],
+  platforms: game.platforms ? JSON.parse(game.platforms) : [],
+  popularityScore: game.points || 0,
+  averageRating: game.points || 0
+}));
+  } catch (err) {
+    console.error('Błąd pobierania gier:', err)
+  }
+})
+
+// Filtrowanie i sortowanie
 const filteredAndSortedGames = computed(() => {
   let filtered = [...allGames.value]
 
-  if (selectedGenres.value.length > 0) {
+  if (selectedGenres.value.length) {
     filtered = filtered.filter(game =>
-        game.genres.some(genre => selectedGenres.value.includes(genre))
+      game.genres.some(genre => selectedGenres.value.includes(genre))
     )
   }
 
-  if (selectedPlatforms.value.length > 0) {
+  if (selectedPlatforms.value.length) {
     filtered = filtered.filter(game =>
-        game.platforms.some(platform => selectedPlatforms.value.includes(platform))
+      game.platforms.some(platform => selectedPlatforms.value.includes(platform))
     )
   }
 
   if (selectedYear.value !== 'Wszystkie') {
-    filtered = filtered.filter(game =>
-        game.releaseYear === Number(selectedYear.value)
-    )
+    filtered = filtered.filter(game => game.releaseYear === Number(selectedYear.value))
   }
 
   filtered.sort((a, b) => {
     switch (sortBy.value) {
-      case 'popularity': return b.popularityScore - a.popularityScore
-      case 'rating': return b.averageRating - a.averageRating
+      case 'popularity': return (b.points || 0) - (a.points || 0)
+      case 'rating': return (b.points || 0) - (a.points || 0) // jeśli masz średnią ocenę
       case 'year-desc': return b.releaseYear - a.releaseYear
       case 'year-asc': return a.releaseYear - b.releaseYear
       default: return 0
@@ -62,14 +78,14 @@ const filteredAndSortedGames = computed(() => {
 })
 
 const totalPages = computed(() =>
-    Math.ceil(filteredAndSortedGames.value.length / itemsPerPage)
+  Math.ceil(filteredAndSortedGames.value.length / itemsPerPage.value)
 )
 
 const paginatedGames = computed(() =>
-    filteredAndSortedGames.value.slice(
-        (currentPage.value - 1) * itemsPerPage,
-        currentPage.value * itemsPerPage
-    )
+  filteredAndSortedGames.value.slice(
+    (currentPage.value - 1) * itemsPerPage.value,
+    currentPage.value * itemsPerPage.value
+  )
 )
 </script>
 
@@ -86,10 +102,10 @@ const paginatedGames = computed(() =>
       <div class="flex flex-col lg:flex-row gap-8">
         <aside class="w-full lg:w-[260px] lg:shrink-0">
           <FiltersPanel
-              v-model:genres="selectedGenres"
-              v-model:platforms="selectedPlatforms"
-              v-model:year="selectedYear"
-              @reset="resetFilters"
+            v-model:genres="selectedGenres"
+            v-model:platforms="selectedPlatforms"
+            v-model:year="selectedYear"
+            @reset="resetFilters"
           />
         </aside>
 
@@ -117,13 +133,13 @@ const paginatedGames = computed(() =>
           </div>
 
           <div
-              v-if="paginatedGames.length > 0"
-              class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+            v-if="paginatedGames.length"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
           >
             <GameCard
-                v-for="game in paginatedGames"
-                :key="game.id"
-                :game="game"
+              v-for="game in paginatedGames"
+              :key="game.id"
+              :game="game"
             />
           </div>
 
@@ -133,8 +149,8 @@ const paginatedGames = computed(() =>
 
           <div v-if="totalPages > 1" class="pt-8">
             <Pagination
-                v-model:currentPage="currentPage"
-                :totalPages="totalPages"
+              v-model:currentPage="currentPage"
+              :totalPages="totalPages"
             />
           </div>
         </main>

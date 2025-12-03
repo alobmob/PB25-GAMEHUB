@@ -12,6 +12,7 @@ CREATE TABLE `Users` (
   `name` VARCHAR(50),
   `surname` VARCHAR(50),
   `nick` VARCHAR(50),
+  `email` VARCHAR(255),
   `password` VARCHAR(255),
   `account_type_id` INT,
   INDEX (`account_type_id`)
@@ -39,6 +40,14 @@ CREATE TABLE `Game` (
   INDEX (`producer_id`),
   INDEX (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO Game (title, producer_id, type_id, release_date, points, total_votes, total_points)
+VALUES
+('Cyberpunk 2077', 1, 1, '2020-12-10', 7.5, 100, 750),
+('The Witcher 3', 1, 1, '2015-05-19', 9.0, 200, 1800),
+('Elden Ring', 2, 2, '2022-02-25', 9.5, 150, 1425),
+('Hades', 3, 3, '2020-09-17', 8.8, 120, 1056),
+('God of War', 4, 2, '2018-04-20', 9.2, 180, 1656);
 
 CREATE TABLE `PointValue` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,

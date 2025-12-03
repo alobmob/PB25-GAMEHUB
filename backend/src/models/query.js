@@ -1,38 +1,34 @@
 import pool from '../models/db_connect.js'; 
 
 
-export const getPopularGames = async (req, res) => {
-  const limit = parseInt(req.query.limit, 10) || 6;
-  const sql = `
-    SELECT id, title, 
-           COALESCE(points, 0) AS ratingAvg
-    FROM \`Game\`
-    ORDER BY points DESC, total_votes DESC
-    LIMIT ?;
-  `;
+export const getAllGames = async (req, res) => {
   try {
-    const [rows] = await pool.query(sql, [limit]);
-    res.json(rows);
-  } catch (err) {
-    console.error('getPopularGames error:', err);
-    res.status(500).json({ error: err.message });
-  }
-};
+    const [rows] = await pool.query(`
+      SELECT 
+        id,
+        title,
+        release_date,
+        points,
+        total_votes
+      FROM Game
+      ORDER BY release_date DESC
+    `);
 
-export const getRecentGames = async (req, res) => {
-  const limit = parseInt(req.query.limit, 10) || 6;
-  const sql = `
-    SELECT id, title, 
-           COALESCE(points, 0) AS ratingAvg
-    FROM \`Game\`
-    ORDER BY release_date DESC, id DESC
-    LIMIT ?;
-  `;
-  try {
-    const [rows] = await pool.query(sql, [limit]);
-    res.json(rows);
+
+    const games = rows.map(game => ({
+      id: game.id,
+      title: game.title,
+      releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : null,
+      popularityScore: game.points || 0,
+      averageRating: game.points || 0,
+      totalVotes: game.total_votes || 0,
+      genres: [],      
+      platforms: []    
+    }));
+
+    res.json(games);
   } catch (err) {
-    console.error('getRecentGames error:', err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
