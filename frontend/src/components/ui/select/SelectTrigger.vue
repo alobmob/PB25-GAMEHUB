@@ -25,10 +25,11 @@ const toggle = () => {
       data-slot="select-trigger"
       :data-size="props.size"
       :class="[
-      'border-input data-[placeholder]:text-muted-foreground flex w-full items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive disabled:cursor-not-allowed disabled:opacity-50',
+      'border-input data-[placeholder]:text-muted-foreground flex w-full shrink-0 items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive disabled:cursor-not-allowed disabled:opacity-50',
       props.size === 'default' ? 'h-9' : 'h-8',
       props.class
     ]"
+      :style="{ width: '12rem' }"
       @click="toggle"
   >
     <slot />
