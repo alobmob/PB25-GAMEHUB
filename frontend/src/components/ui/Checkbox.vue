@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  modelValue: {
+  checked: {
     type: Boolean,
     default: false
   },
@@ -10,10 +10,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:checked'])
 
 const toggle = () => {
-  emit('update:modelValue', !props.modelValue)
+  emit('update:checked', !props.checked)
 }
 </script>
 
@@ -23,13 +23,13 @@ const toggle = () => {
       data-slot="checkbox"
       :class="[
       'peer border size-4 shrink-0 rounded-[4px] border bg-input-background transition-shadow shadow-xs outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',
-      props.modelValue && 'bg-primary text-primary-foreground border-primary',
+      props.checked && 'bg-primary text-primary-foreground border-primary',
       props.class
     ]"
       @click="toggle"
   >
     <svg
-        v-if="props.modelValue"
+        v-if="props.checked"
         class="size-3.5 text-current"
         viewBox="0 0 24 24"
     >
