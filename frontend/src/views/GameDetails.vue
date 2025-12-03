@@ -178,13 +178,13 @@ const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
 
     <RatingModal
         :open="ratingModalOpen"
-        @onOpenChange="ratingModalOpen = $event"
+        @update:open="ratingModalOpen = $event"
         :gameTitle="game?.title"
     />
 
     <AddToListModal
         :open="listModalOpen"
-        @onOpenChange="listModalOpen = $event"
+        @update:open="listModalOpen = $event"
         :gameTitle="game?.title"
     />
   </div>
