@@ -43,7 +43,7 @@ async function connectDB() {
 
 await connectDB();
 
-// 🔥 Inject DB into routers
+
 app.use((req, res, next) => {
   req.db = db;
   next();

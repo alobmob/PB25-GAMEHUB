@@ -1,19 +1,11 @@
 import express from "express";
-import {getAllGames } from "../models/query.js";
+import { getAllGames, getGameById } from "../controllers/gamesController.js";
+import { addRating} from "../controllers/ratingsController.js";
 import pool from "../models/db_connect.js";
 
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  try {
-    const [rows] = await pool.query("SELECT * FROM games");
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
 router.get("/tags", async (req, res) => {
   try {
     const [rows] = await req.db.query(`
@@ -30,6 +22,7 @@ router.get("/tags", async (req, res) => {
   }
 });
 router.get("/", getAllGames);
-
+router.post("/:id/ratings", addRating);
+router.get("/:id", getGameById);
 
 export default router;

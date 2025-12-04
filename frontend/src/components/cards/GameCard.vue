@@ -30,8 +30,8 @@ defineProps({
 
         <div class="flex items-center gap-1 mb-3">
           <Star class="size-4 fill-yellow-400 text-yellow-400" />
-          <span class="text-sm">{{ game.averageRating.toFixed(1) }}</span>
-          <span class="text-sm text-gray-500">({{ game.ratingsCount }})</span>
+          <span class="text-sm">{{ (game.averageRating || 0).toFixed(1) }}</span>
+          <span class="text-sm text-gray-500">({{ game.ratingsCount || 0 }})</span>
         </div>
 
         <div class="flex flex-wrap gap-1 mb-2">

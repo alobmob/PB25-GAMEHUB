@@ -32,25 +32,23 @@ CREATE TABLE games (
   description TEXT,
   release_year INT,
   cover_image VARCHAR(500),
-  average_rating DECIMAL(3,1) DEFAULT 0,
   popularity_score INT DEFAULT 0,
-  ratings_count INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
-INSERT INTO games (title, slug, description, release_year, cover_image, average_rating, popularity_score, ratings_count) VALUES
-('Cyberpunk 2077', 'cyberpunk-2077', 'Futurystyczna gra RPG osadzona w Night City, mieście obsesji na punkcie władzy, luksusu i modyfikacji ciała.', 2020, 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=600&fit=crop', 4.2, 95, 1524),
-('The Witcher 3: Wild Hunt', 'the-witcher-3', 'Epicka gra RPG opowiadająca historię Geralta z Rivii, łowcy potworów poszukującego swojej przybranej córki.', 2015, 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop', 4.9, 98, 3241),
-('Elden Ring', 'elden-ring', 'Mroczna gra fantasy stworzona przez FromSoftware we współpracy z George/em R.R. Martinem.', 2022, 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop', 4.7, 94, 2103),
-('Minecraft', 'minecraft', 'Kultowa gra sandbox pozwalająca budować, eksplorować i przetrwać w proceduralnie generowanym świecie.', 2011, 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=600&fit=crop', 4.6, 99, 5892),
-('God of War Ragnarök', 'god-of-war-ragnarok', 'Kontynuacja przygód Kratosa i Atreusa w nordyckim świecie pełnym bogów i potworów.', 2022, 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=600&fit=crop', 4.8, 92, 1876),
-('Red Dead Redemption 2', 'red-dead-redemption-2', 'Epicka opowieść o outlawach na Dzikim Zachodzie u schyłku XIX wieku.', 2018, 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=600&fit=crop', 4.7, 96, 2654),
-('Hollow Knight', 'hollow-knight', 'Klimatyczna gra metroidvania z ręcznie rysowaną grafiką i wymagającą rozgrywką.', 2017, 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=600&fit=crop', 4.6, 88, 1432),
-('Hades', 'hades', 'Roguelike dungeon crawler osadzony w greckiej mitologii, tworzony przez Supergiant Games.', 2020, 'https://images.unsplash.com/photo-1518157449206-6c183e6a2c5c?w=400&h=600&fit=crop', 4.8, 91, 1987),
-('Stardew Valley', 'stardew-valley', 'Relaksująca gra symulacyjna o prowadzeniu farmy i życiu na wsi.', 2016, 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=600&fit=crop', 4.7, 93, 2341),
-('Baldur\s Gate 3', 'baldurs-gate-3', 'Epickie RPG oparte na systemie Dungeons & Dragons 5E, stworzone przez Larian Studios.', 2023, 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&h=600&fit=crop', 4.9, 97, 2876),
-('Celeste', 'celeste', 'Platformówka z głęboką narracją o pokonywaniu własnych słabości.', 2018, 'https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=600&fit=crop', 4.6, 86, 1124),
-('The Legend of Zelda: Breath of the Wild', 'zelda-breath-of-the-wild', 'Rewolucyjna gra z otwartym światem osadzona w uniwersum Zeldy.', 2017, 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400&h=600&fit=crop', 4.9, 97, 3567);
+INSERT INTO games (title, slug, description, release_year, cover_image, popularity_score) VALUES
+('Cyberpunk 2077', 'cyberpunk-2077', 'Futurystyczna gra RPG osadzona w Night City, mieście obsesji na punkcie władzy, luksusu i modyfikacji ciała.', 2020, 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=600&fit=crop', 95),
+('The Witcher 3: Wild Hunt', 'the-witcher-3', 'Epicka gra RPG opowiadająca historię Geralta z Rivii, łowcy potworów poszukującego swojej przybranej córki.', 2015, 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop', 98),
+('Elden Ring', 'elden-ring', 'Mroczna gra fantasy stworzona przez FromSoftware we współpracy z George/em R.R. Martinem.', 2022, 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop', 94),
+('Minecraft', 'minecraft', 'Kultowa gra sandbox pozwalająca budować, eksplorować i przetrwać w proceduralnie generowanym świecie.', 2011, 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=600&fit=crop', 99),
+('God of War Ragnarök', 'god-of-war-ragnarok', 'Kontynuacja przygód Kratosa i Atreusa w nordyckim świecie pełnym bogów i potworów.', 2022, 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=600&fit=crop', 92),
+('Red Dead Redemption 2', 'red-dead-redemption-2', 'Epicka opowieść o outlawach na Dzikim Zachodzie u schyłku XIX wieku.', 2018, 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=600&fit=crop', 96),
+('Hollow Knight', 'hollow-knight', 'Klimatyczna gra metroidvania z ręcznie rysowaną grafiką i wymagającą rozgrywką.', 2017, 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=600&fit=crop', 88),
+('Hades', 'hades', 'Roguelike dungeon crawler osadzony w greckiej mitologii, tworzony przez Supergiant Games.', 2020, 'https://images.unsplash.com/photo-1518157449206-6c183e6a2c5c?w=400&h=600&fit=crop', 91),
+('Stardew Valley', 'stardew-valley', 'Relaksująca gra symulacyjna o prowadzeniu farmy i życiu na wsi.', 2016, 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=600&fit=crop', 93),
+('Baldur\s Gate 3', 'baldurs-gate-3', 'Epickie RPG oparte na systemie Dungeons & Dragons 5E, stworzone przez Larian Studios.', 2023, 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&h=600&fit=crop', 97),
+('Celeste', 'celeste', 'Platformówka z głęboką narracją o pokonywaniu własnych słabości.', 2018, 'https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=600&fit=crop', 86),
+('The Legend of Zelda: Breath of the Wild', 'zelda-breath-of-the-wild', 'Rewolucyjna gra z otwartym światem osadzona w uniwersum Zeldy.', 2017, 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400&h=600&fit=crop', 97);
 
 -- 3. Tabela tags (gatunki + platformy)
 CREATE TABLE tags (

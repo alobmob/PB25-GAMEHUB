@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 
 import Navbar from '../components/layout/Navbar.vue'
-
+import axios from 'axios';
 import Card from '../components/ui/card/Card.vue'
 import CardContent from '../components/ui/card/CardContent.vue'
 import Badge from '../components/ui/Badge.vue'
@@ -15,24 +15,62 @@ import RatingModal from '../components/rating/RatingModal.vue'
 import AddToListModal from '../components/rating/AddToListModal.vue'
 
 import ImageWithFallback from '../components/ui/ImageWithFallback.vue'
-
-import { mockGames, mockRatings } from '../utils/mockData'
 import { Star, Plus, ArrowLeft } from 'lucide-vue-next'
 
 const route = useRoute()
 const id = route.params.id
 
+const game = ref(null)
+const gameRatings = ref([])
+const ratingBreakdown = ref([])
+
 const ratingModalOpen = ref(false)
 const listModalOpen = ref(false)
 
-const game = mockGames.find(g => g.id === id)
-const gameRatings = mockRatings.filter(r => r.gameId === id)
+const loadGame = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/games/${id}`)
+    const data = await res.json()
 
-const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
-  stars,
-  count: Math.floor(Math.random() * 200) + 50,
-  percentage: Math.floor(Math.random() * 60) + 10
-}))
+    if (!data || data.error) return
+
+    const tags = Array.isArray(data.tags) ? data.tags : []
+    const ratings = Array.isArray(data.ratings) ? data.ratings : []
+
+    game.value = {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      releaseYear: data.releaseYear,
+      coverImage: data.coverUrl || data.coverImage || '',
+      averageRating: Number(data.averageRating || 0),
+      ratingsCount: Number(data.ratingsCount || ratings.length || 0),
+      ratings: ratings,
+      tags,
+      genres: tags.filter(t => ['RPG','Akcja','Przygodowa','Strategiczna','Symulacyjna','Platformowa','Indie','Sandbox','Survivalowa','Hack and Slash','Western','Souls-like','Eksploracjna'].includes(t)),
+      platforms: tags.filter(t => ['PC','PlayStation 5','PlayStation 4','Xbox Series X','Xbox One','Nintendo Switch','Mobile'].includes(t))
+    }
+
+    gameRatings.value = ratings
+    const breakdown = [5, 4, 3, 2, 1].map(stars => {
+      const count = ratings.filter(r => r.rating === stars).length
+      const percentage = ratings.length > 0 ? Math.round((count / ratings.length) * 100) : 0
+      return { stars, count, percentage }
+    })
+    ratingBreakdown.value = breakdown
+
+  } catch (err) {
+    console.error('Błąd pobierania gry:', err)
+  }
+}
+
+onMounted(() => {
+  loadGame()
+})
+
+const handleRatingAdded = async () => {
+  await loadGame()
+}
 </script>
 
 <template>
@@ -177,9 +215,11 @@ const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
     </div>
 
     <RatingModal
-        :open="ratingModalOpen"
-        @onOpenChange="ratingModalOpen = $event"
-        :gameTitle="game?.title"
+      :open="ratingModalOpen"
+      @update:open="ratingModalOpen = $event"
+      :gameTitle="game?.title"
+      :gameId="game?.id"
+      @ratingAdded="loadGame"
     />
 
     <AddToListModal

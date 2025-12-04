@@ -15,13 +15,15 @@ import RatingStars from './RatingStars.vue'
 
 const props = defineProps({
   open: { type: Boolean, required: true },
-  gameTitle: { type: String, required: true }
+  gameTitle: { type: String, required: true },
+  gameId: { type: Number, required: true }
 })
 
-const emit = defineEmits(['update:open'])
+const emit = defineEmits(['update:open', 'ratingAdded'])
 
 const rating = ref(0)
 const comment = ref('')
+const isLoading = ref(false)
 
 watch(
     () => props.open,
@@ -35,16 +37,44 @@ watch(
 
 const close = () => emit('update:open', false)
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (rating.value === 0) {
     alert('Prosze wybrac ocene')
     return
   }
 
-  alert('Ocena zostala dodana!')
-  close()
+  isLoading.value = true
+  try {
+    const response = await fetch(`http://localhost:3000/api/games/${props.gameId}/ratings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        score: rating.value,
+        comment: comment.value
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      alert('Błąd: ' + (error.error || 'Nie udało się dodać opinii'))
+      return
+    }
+
+    await response.json()
+    alert('Ocena zostala dodana!')
+    emit('ratingAdded')
+    close()
+  } catch (err) {
+    console.error('Błąd dodawania opinii:', err)
+    alert('Błąd: ' + err.message)
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
+
 
 <template>
   <Dialog :open="open" @update:open="emit('update:open', $event)">
@@ -73,8 +103,8 @@ const handleSubmit = () => {
       </div>
 
       <DialogFooter>
-        <Button variant="outline" @click="close">Anuluj</Button>
-        <Button @click="handleSubmit">Dodaj ocene</Button>
+        <Button variant="outline" @click="close" :disabled="isLoading">Anuluj</Button>
+        <Button @click="handleSubmit" :disabled="isLoading">{{ isLoading ? 'Dodawanie...' : 'Dodaj ocene' }}</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
