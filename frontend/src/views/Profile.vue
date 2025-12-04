@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-import Navbar from '../components/layout/Navbar.vue'
 import GameCard from '../components/cards/GameCard.vue'
 import CommentItem from '../components/rating/CommentItem.vue'
 
@@ -18,11 +17,15 @@ import CardContent from '../components/ui/card/CardContent.vue'
 import Button from '../components/ui/Button.vue'
 import Badge from '../components/ui/Badge.vue'
 
+import EditUserModal from '../components/ui/EditUserModal.vue'
+import ManageListsModal from '../components/ui/ManageListsModal.vue'
+
 import { User, Mail, Calendar, Edit, Lock, Unlock } from 'lucide-vue-next'
 
 import { mockGames, mockGameLists, mockRatings } from '../utils/mockData'
 
 const selectedList = ref(mockGameLists[0])
+const lists = ref([...mockGameLists])
 
 const user = {
   displayName: 'Jan Kowalski',
@@ -30,12 +33,15 @@ const user = {
   joinDate: '2023-01-15'
 }
 
+const editModalOpen = ref(false)
+const manageListsOpen = ref(false)
+
 const userRatings = computed(() =>
     mockRatings.filter(r => r.userId === '1')
 )
 
 const userGamesInLists = computed(() =>
-    mockGameLists
+    lists.value
         .flatMap(list => list.gameIds.map(id => mockGames.find(g => g.id === id)))
         .filter(Boolean)
 )
@@ -45,10 +51,9 @@ const currentTab = ref('lists')
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <Navbar :isLoggedIn="true" />
-
     <div class="container mx-auto px-4 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
         <div class="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -72,7 +77,12 @@ const currentTab = ref('lists')
               </div>
 
               <div class="pt-4 space-y-2">
-                <Button variant="outline" class="w-full justify-start" size="sm">
+                <Button
+                    variant="outline"
+                    class="w-full justify-start"
+                    size="sm"
+                    @click="editModalOpen = true"
+                >
                   <Edit class="size-4 mr-2" />
                   Edytuj profil
                 </Button>
@@ -92,12 +102,12 @@ const currentTab = ref('lists')
             <TabsContent value="lists" class="space-y-6">
               <div class="flex items-center justify-between">
                 <h2>Moje listy</h2>
-                <Button>Nowa lista</Button>
+                <Button @click="manageListsOpen = true">Zarządzaj listami</Button>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card
-                    v-for="list in mockGameLists"
+                    v-for="list in lists"
                     :key="list.id"
                     class="cursor-pointer transition-shadow"
                     :class="selectedList.id === list.id ? 'ring-2 ring-purple-600' : ''"
@@ -177,5 +187,19 @@ const currentTab = ref('lists')
         </div>
       </div>
     </div>
+
+    <EditUserModal
+        :open="editModalOpen"
+        @update:open="editModalOpen = $event"
+        :currentDisplayName="user.displayName"
+        :currentEmail="user.email"
+    />
+
+    <ManageListsModal
+        :open="manageListsOpen"
+        :lists="lists"
+        @update:open="manageListsOpen = $event"
+        @update:lists="lists = $event"
+    />
   </div>
 </template>

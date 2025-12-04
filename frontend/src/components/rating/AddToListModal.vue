@@ -17,9 +17,10 @@ import { mockGameLists } from '../../utils/mockData.js'
 
 const props = defineProps({
   open: Boolean,
-  onOpenChange: Function,
   gameTitle: String
 })
+
+const emit = defineEmits(['update:open'])
 
 const showNewList = ref(false)
 const newListName = ref('')
@@ -34,6 +35,8 @@ const toggleList = (id) => {
   }
 }
 
+const close = () => emit('update:open', false)
+
 const handleSubmit = () => {
   if (showNewList.value && newListName.value.trim()) {
     alert(`Utworzono liste "${newListName.value}" i dodano gre`)
@@ -44,7 +47,7 @@ const handleSubmit = () => {
     return
   }
 
-  props.onOpenChange(false)
+  close()
   showNewList.value = false
   newListName.value = ''
   isPublic.value = false
@@ -53,7 +56,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <Dialog :open="open" @update:open="onOpenChange">
+  <Dialog :open="open" @update:open="emit('update:open', $event)">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Dodaj do listy</DialogTitle>
@@ -111,27 +114,20 @@ const handleSubmit = () => {
           </div>
 
           <div class="flex items-center space-x-2">
-            <Checkbox
-                id="is-public"
-                v-model:checked="isPublic"
-            />
+            <Checkbox id="is-public" v-model:checked="isPublic" />
             <label for="is-public" class="text-sm cursor-pointer">
               Lista publiczna
             </label>
           </div>
 
-          <Button
-              variant="ghost"
-              size="sm"
-              @click="showNewList = false"
-          >
+          <Button variant="ghost" size="sm" @click="showNewList = false">
             Powrót do wyboru listy
           </Button>
         </template>
       </div>
 
       <DialogFooter>
-        <Button variant="outline" @click="onOpenChange(false)">
+        <Button variant="outline" @click="close">
           Anuluj
         </Button>
 

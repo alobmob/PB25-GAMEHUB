@@ -37,7 +37,6 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <!-- identyczne rozwiązanie jak w LOGIN (bez scrolla) -->
   <div class="min-h-[calc(100vh-64px)] bg-background flex items-center justify-center">
     <Card class="w-full max-w-md">
       <CardHeader class="text-center">

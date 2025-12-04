@@ -2,8 +2,6 @@
 import { ref } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 
-import Navbar from '../components/layout/Navbar.vue'
-
 import Card from '../components/ui/card/Card.vue'
 import CardContent from '../components/ui/card/CardContent.vue'
 import Badge from '../components/ui/Badge.vue'
@@ -37,7 +35,6 @@ const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <Navbar />
 
     <div class="container mx-auto px-4 py-8">
       <RouterLink to="/">
@@ -51,10 +48,7 @@ const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
         <p class="text-gray-600">Gra nie została znaleziona</p>
       </div>
 
-      <div
-          v-else
-          class="grid grid-cols-1 lg:grid-cols-3 gap-8"
-      >
+      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-1">
           <div class="aspect-[2/3] rounded-lg overflow-hidden bg-gray-100 sticky top-24">
             <ImageWithFallback
@@ -178,13 +172,13 @@ const ratingBreakdown = [5, 4, 3, 2, 1].map(stars => ({
 
     <RatingModal
         :open="ratingModalOpen"
-        @onOpenChange="ratingModalOpen = $event"
+        @update:open="ratingModalOpen = $event"
         :gameTitle="game?.title"
     />
 
     <AddToListModal
         :open="listModalOpen"
-        @onOpenChange="listModalOpen = $event"
+        @update:open="listModalOpen = $event"
         :gameTitle="game?.title"
     />
   </div>

@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import Navbar from '../components/layout/Navbar.vue'
 import Card from '../components/ui/card/Card.vue'
 import CardContent from '../components/ui/card/CardContent.vue'
 import Badge from '../components/ui/Badge.vue'
@@ -12,7 +11,9 @@ import { Trophy, TrendingUp, Star } from 'lucide-vue-next'
 import { mockGames } from '../utils/mockData'
 
 const topGames = computed(() =>
-    [...mockGames].sort((a, b) => b.popularityScore - a.popularityScore).slice(0, 10)
+    [...mockGames]
+        .sort((a, b) => b.popularityScore - a.popularityScore)
+        .slice(0, 10)
 )
 
 const getMedalColor = (position) => {
@@ -36,8 +37,6 @@ const getMedalBg = (position) => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <Navbar />
-
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-4xl mx-auto">
         <div class="mb-8 text-center">
@@ -69,7 +68,9 @@ const getMedalBg = (position) => {
                       </template>
                       <template v-else>
                         <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <span class="text-xl text-gray-600">{{ index + 1 }}</span>
+                          <span class="text-xl text-gray-600">
+                            {{ index + 1 }}
+                          </span>
                         </div>
                       </template>
                       <span class="text-xs text-gray-500 mt-1">Miejsce</span>
@@ -96,16 +97,24 @@ const getMedalBg = (position) => {
                         </Badge>
                       </div>
 
-                      <div class="flex items-center gap-4 text-sm text-gray-600">
+                      <div
+                          class="flex text-sm text-gray-600
+                               flex-col gap-2
+                               md:flex-row md:items-center md:gap-6"
+                      >
                         <div class="flex items-center gap-1">
                           <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           <span>{{ game.averageRating.toFixed(1) }}</span>
                         </div>
+
                         <div class="flex items-center gap-1">
                           <TrendingUp class="w-4 h-4" />
                           <span>Popularność: {{ game.popularityScore }}</span>
                         </div>
-                        <span>Rok: {{ game.releaseYear }}</span>
+
+                        <div class="flex items-center gap-1">
+                          <span>Rok: {{ game.releaseYear }}</span>
+                        </div>
                       </div>
                     </div>
 

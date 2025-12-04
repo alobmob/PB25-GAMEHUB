@@ -1,9 +1,20 @@
 <script setup>
+import { provide } from 'vue'
+
 const props = defineProps({
-  open: Boolean
+  open: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['update:open'])
+
+const close = () => {
+  emit('update:open', false)
+}
+
+provide('dialogClose', close)
 </script>
 
 <template>

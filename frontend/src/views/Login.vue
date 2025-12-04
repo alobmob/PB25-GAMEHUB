@@ -24,7 +24,6 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <!-- LOGIN WYSOKOŚĆ = 100VH MINUS NAVBAR (4rem = h-16) -->
   <div class="h-[calc(100vh-4rem)] bg-background flex items-center justify-center p-4">
     <Card class="w-full max-w-md">
       <CardHeader class="text-center">
