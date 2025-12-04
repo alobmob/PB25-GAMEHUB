@@ -18,6 +18,7 @@ import CardContent from '../components/ui/card/CardContent.vue'
 import Button from '../components/ui/Button.vue'
 import Badge from '../components/ui/Badge.vue'
 
+import EditUserModal from '../components/ui/EditUserModal.vue'
 import { User, Mail, Calendar, Edit, Lock, Unlock } from 'lucide-vue-next'
 
 import { mockGames, mockGameLists, mockRatings } from '../utils/mockData'
@@ -29,6 +30,8 @@ const user = {
   email: 'jan.kowalski@example.com',
   joinDate: '2023-01-15'
 }
+
+const editModalOpen = ref(false)
 
 const userRatings = computed(() =>
     mockRatings.filter(r => r.userId === '1')
@@ -49,6 +52,7 @@ const currentTab = ref('lists')
 
     <div class="container mx-auto px-4 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
         <div class="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -61,6 +65,7 @@ const currentTab = ref('lists')
             </CardHeader>
 
             <CardContent class="space-y-3">
+
               <div class="flex items-center gap-2 text-sm text-gray-600">
                 <Mail class="size-4" />
                 <span>{{ user.email }}</span>
@@ -72,11 +77,17 @@ const currentTab = ref('lists')
               </div>
 
               <div class="pt-4 space-y-2">
-                <Button variant="outline" class="w-full justify-start" size="sm">
+                <Button
+                    variant="outline"
+                    class="w-full justify-start"
+                    size="sm"
+                    @click="editModalOpen = true"
+                >
                   <Edit class="size-4 mr-2" />
                   Edytuj profil
                 </Button>
               </div>
+
             </CardContent>
           </Card>
         </div>
@@ -173,9 +184,18 @@ const currentTab = ref('lists')
                 </CardContent>
               </Card>
             </TabsContent>
+
           </Tabs>
         </div>
       </div>
     </div>
+
+    <EditUserModal
+        :open="editModalOpen"
+        @update:open="editModalOpen = $event"
+        :currentDisplayName="user.displayName"
+        :currentEmail="user.email"
+        @save="(data) => console.log('Zapisano dane użytkownika:', data)"
+    />
   </div>
 </template>
