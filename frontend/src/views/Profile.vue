@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-import Navbar from '../components/layout/Navbar.vue'
 import GameCard from '../components/cards/GameCard.vue'
 import CommentItem from '../components/rating/CommentItem.vue'
 
@@ -52,8 +51,6 @@ const currentTab = ref('lists')
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <Navbar :isLoggedIn="true" />
-
     <div class="container mx-auto px-4 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
@@ -105,9 +102,7 @@ const currentTab = ref('lists')
             <TabsContent value="lists" class="space-y-6">
               <div class="flex items-center justify-between">
                 <h2>Moje listy</h2>
-                <Button @click="manageListsOpen = true">
-                  Zarządzaj listami
-                </Button>
+                <Button @click="manageListsOpen = true">Zarządzaj listami</Button>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -198,7 +193,6 @@ const currentTab = ref('lists')
         @update:open="editModalOpen = $event"
         :currentDisplayName="user.displayName"
         :currentEmail="user.email"
-        @save="(data) => console.log('Zapisano dane użytkownika:', data)"
     />
 
     <ManageListsModal

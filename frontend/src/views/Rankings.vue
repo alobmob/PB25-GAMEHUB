@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import Navbar from '../components/layout/Navbar.vue'
 import Card from '../components/ui/card/Card.vue'
 import CardContent from '../components/ui/card/CardContent.vue'
 import Badge from '../components/ui/Badge.vue'
@@ -12,7 +11,9 @@ import { Trophy, TrendingUp, Star } from 'lucide-vue-next'
 import { mockGames } from '../utils/mockData'
 
 const topGames = computed(() =>
-    [...mockGames].sort((a, b) => b.popularityScore - a.popularityScore).slice(0, 10)
+    [...mockGames]
+        .sort((a, b) => b.popularityScore - a.popularityScore)
+        .slice(0, 10)
 )
 
 const getMedalColor = (position) => {
@@ -36,8 +37,6 @@ const getMedalBg = (position) => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <Navbar />
-
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-4xl mx-auto">
         <div class="mb-8 text-center">
@@ -59,7 +58,6 @@ const getMedalBg = (position) => {
               >
                 <CardContent class="p-6">
                   <div class="flex gap-6">
-
                     <div class="flex flex-col items-center justify-center min-w-[60px]">
                       <template v-if="index + 1 <= 3">
                         <Trophy
@@ -115,7 +113,6 @@ const getMedalBg = (position) => {
                         <p class="text-2xl">{{ game.popularityScore }}</p>
                       </div>
                     </div>
-
                   </div>
                 </CardContent>
               </Card>
