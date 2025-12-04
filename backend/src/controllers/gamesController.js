@@ -2,9 +2,20 @@ import { getAllGamesQuery, getAllRatingsQuery, getGameByIdQuery, getGameRatingsQ
 
 export const getAllGames = async (req, res) => {
   try {
-    const games = await getAllGamesQuery();
-    const ratings = await getAllRatingsQuery();
+    const { genre, platform, year, sort, page = 1, limit = 9 } = req.query;
 
+    // Zamieniamy page i limit na liczby
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 9;
+    const offset = (pageNum - 1) * limitNum;
+
+    // Normalizuj genre i platform na tablice
+    const genres = Array.isArray(genre) ? genre : (genre ? [genre] : []);
+    const platforms = Array.isArray(platform) ? platform : (platform ? [platform] : []);
+
+    // Wywołanie nowej wersji zapytania SQL z filtrami
+    const { games, total } = await getAllGamesQuery({ genres, platforms, year, sort, limit: limitNum, offset });
+    const ratings = await getAllRatingsQuery();
     const ratingsMap = {};
     const statsMap = {};
     
@@ -47,7 +58,7 @@ export const getAllGames = async (req, res) => {
       )
     }));
 
-    res.json(result);
+    res.json({ games: result, total });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

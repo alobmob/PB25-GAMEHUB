@@ -1,6 +1,59 @@
 import pool from '../models/db_connect.js';
 
-export const getAllGamesQuery = async () => {
+export const getAllGamesQuery = async ({ genres, platforms, year, sort, limit, offset }) => {
+  // Tablica do dynamicznych wartości SQL
+  const params = [];
+  
+  let whereClauses = [];
+
+  // Filtrowanie po roku
+  if (year) {
+    whereClauses.push('g.release_year = ?');
+    params.push(year);
+  }
+
+  // Filtrowanie po gatunkach (wiele opcji - jeśli gra ma KTÓRYKOLWIEK z wybranych gatunków)
+  if (genres.length > 0) {
+    const genrePlaceholders = genres.map(() => '?').join(',');
+    whereClauses.push(`EXISTS (
+      SELECT 1 FROM game_tags gt2
+      LEFT JOIN tags t2 ON gt2.tag_id = t2.id
+      WHERE gt2.game_id = g.id AND t2.name IN (${genrePlaceholders})
+    )`);
+    params.push(...genres);
+  }
+
+  // Filtrowanie po platformach (wiele opcji - jeśli gra ma KTÓREKOLWIEK z wybranych platform)
+  if (platforms.length > 0) {
+    const platformPlaceholders = platforms.map(() => '?').join(',');
+    whereClauses.push(`EXISTS (
+      SELECT 1 FROM game_tags gt3
+      LEFT JOIN tags t3 ON gt3.tag_id = t3.id
+      WHERE gt3.game_id = g.id AND t3.name IN (${platformPlaceholders})
+    )`);
+    params.push(...platforms);
+  }
+
+  // Budowanie warunku WHERE
+  const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
+  
+  // Sortowanie
+  let orderSQL = 'ORDER BY g.popularity_score DESC'; // default
+  if (sort === 'rating') orderSQL = 'ORDER BY avg_rating DESC';
+  if (sort === 'year-desc') orderSQL = 'ORDER BY g.release_year DESC';
+  if (sort === 'year-asc') orderSQL = 'ORDER BY g.release_year ASC';
+  
+  // Pobranie całkowitej liczby gier (bez LIMIT dla paginacji)
+  const [totalResult] = await pool.query(`
+    SELECT COUNT(DISTINCT g.id) as count
+    FROM games g
+    LEFT JOIN ratings r ON g.id = r.game_id
+    ${whereSQL}
+  `, params);
+  
+  const total = totalResult[0].count;
+  
+  // SQL z agregacją ocen (średnia ocena) i limit/paginacja
   const [games] = await pool.query(`
     SELECT 
       g.id,
@@ -10,14 +63,19 @@ export const getAllGamesQuery = async () => {
       g.release_year,
       g.cover_image,
       g.popularity_score,
-      GROUP_CONCAT(DISTINCT t.name SEPARATOR ',') AS tags
+      GROUP_CONCAT(DISTINCT t.name SEPARATOR ',') AS tags,
+      AVG(r.score) AS avg_rating
     FROM games g
     LEFT JOIN game_tags gt ON g.id = gt.game_id
     LEFT JOIN tags t ON gt.tag_id = t.id
+    LEFT JOIN ratings r ON g.id = r.game_id
+    ${whereSQL}
     GROUP BY g.id
-    ORDER BY g.popularity_score DESC;
-  `);
-  return games;
+    ${orderSQL}
+    LIMIT ? OFFSET ?;
+  `, [...params, limit, offset]);
+
+  return { games, total };
 };
 
 export const getAllRatingsQuery = async () => {
