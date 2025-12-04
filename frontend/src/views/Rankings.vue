@@ -58,6 +58,7 @@ const getMedalBg = (position) => {
               >
                 <CardContent class="p-6">
                   <div class="flex gap-6">
+
                     <div class="flex flex-col items-center justify-center min-w-[60px]">
                       <template v-if="index + 1 <= 3">
                         <Trophy
@@ -67,7 +68,9 @@ const getMedalBg = (position) => {
                       </template>
                       <template v-else>
                         <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <span class="text-xl text-gray-600">{{ index + 1 }}</span>
+                          <span class="text-xl text-gray-600">
+                            {{ index + 1 }}
+                          </span>
                         </div>
                       </template>
                       <span class="text-xs text-gray-500 mt-1">Miejsce</span>
@@ -94,16 +97,24 @@ const getMedalBg = (position) => {
                         </Badge>
                       </div>
 
-                      <div class="flex items-center gap-4 text-sm text-gray-600">
+                      <div
+                          class="flex text-sm text-gray-600
+                               flex-col gap-2
+                               md:flex-row md:items-center md:gap-6"
+                      >
                         <div class="flex items-center gap-1">
                           <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           <span>{{ game.averageRating.toFixed(1) }}</span>
                         </div>
+
                         <div class="flex items-center gap-1">
                           <TrendingUp class="w-4 h-4" />
                           <span>Popularność: {{ game.popularityScore }}</span>
                         </div>
-                        <span>Rok: {{ game.releaseYear }}</span>
+
+                        <div class="flex items-center gap-1">
+                          <span>Rok: {{ game.releaseYear }}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -113,6 +124,7 @@ const getMedalBg = (position) => {
                         <p class="text-2xl">{{ game.popularityScore }}</p>
                       </div>
                     </div>
+
                   </div>
                 </CardContent>
               </Card>
