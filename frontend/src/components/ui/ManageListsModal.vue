@@ -52,10 +52,6 @@ const saveEdit = (listId) => {
     errors.value = { [listId]: 'Nazwa listy nie może być pusta' }
     return
   }
-  if (editingName.value.length < 3) {
-    errors.value = { [listId]: 'Nazwa listy musi mieć minimum 3 znaki' }
-    return
-  }
 
   localLists.value = localLists.value.map((list) =>
       list.id === listId ? { ...list, name: editingName.value } : list
@@ -85,11 +81,6 @@ const addList = () => {
     return
   }
 
-  if (newListName.value.length < 3) {
-    errors.value = { new: 'Nazwa listy musi mieć minimum 3 znaki' }
-    return
-  }
-
   const newList = {
     id: `list-${Date.now()}`,
     name: newListName.value,
@@ -115,6 +106,7 @@ const addList = () => {
       <div class="space-y-6 py-4">
         <div class="space-y-3">
           <Label>Twoje listy</Label>
+
           <ScrollArea class="h-[300px] pr-4">
             <div class="space-y-3">
               <template v-if="localLists.length > 0">
@@ -130,7 +122,9 @@ const addList = () => {
                           placeholder="Nazwa listy"
                           :class="errors[list.id] ? 'border-red-500' : ''"
                       />
-                      <p v-if="errors[list.id]" class="text-sm text-red-500">{{ errors[list.id] }}</p>
+                      <p v-if="errors[list.id]" class="text-sm text-red-500">
+                        {{ errors[list.id] }}
+                      </p>
                     </template>
 
                     <template v-else>
@@ -162,7 +156,9 @@ const addList = () => {
                 </div>
               </template>
 
-              <p v-else class="text-center text-gray-500 py-8">Nie masz jeszcze żadnych list</p>
+              <p v-else class="text-center text-gray-500 py-8">
+                Nie masz jeszcze żadnych list
+              </p>
             </div>
           </ScrollArea>
         </div>
@@ -179,7 +175,9 @@ const addList = () => {
                   :class="errors.new ? 'border-red-500' : ''"
                   @keyup.enter="addList"
               />
-              <p v-if="errors.new" class="text-sm text-red-500">{{ errors.new }}</p>
+              <p v-if="errors.new" class="text-sm text-red-500">
+                {{ errors.new }}
+              </p>
             </div>
 
             <Button @click="addList">
