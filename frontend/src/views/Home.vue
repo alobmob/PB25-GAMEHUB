@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import FiltersPanel from '../components/filters/FiltersPanel.vue'
 import GameCard from '../components/cards/GameCard.vue'
 import Pagination from '../components/pagination/Pagination.vue'
@@ -11,7 +11,6 @@ import SelectValue from '../components/ui/select/SelectValue.vue'
 import Label from '../components/ui/Label.vue'
 
 const allGames = ref([])
-const meta = ref({ total: 0, page: 1, limit: 9, totalPages: 1 })
 
 const selectedGenres = ref([])
 const selectedPlatforms = ref([])
@@ -27,67 +26,86 @@ const resetFilters = () => {
   currentPage.value = 1
 }
 
-const buildQuery = () => {
-  const params = new URLSearchParams();
-  params.set('page', currentPage.value)
-  params.set('limit', itemsPerPage.value)
-  params.set('sort', sortBy.value)
-  if (selectedYear.value && selectedYear.value !== 'Wszystkie') params.set('year', selectedYear.value)
-  if (selectedGenres.value.length) params.set('tags', selectedGenres.value.join(','))
-  if (selectedPlatforms.value.length) {
-    const existing = params.get('tags')
-    const combined = existing ? `${existing},${selectedPlatforms.value.join(',')}` : selectedPlatforms.value.join(',')
-    params.set('tags', combined)
-  }
-  return params.toString()
-}
-
-const loadGames = async () => {
+onMounted(async () => {
   try {
-    const qs = buildQuery()
-    const res = await fetch(`http://localhost:3000/api/games?${qs}`)
-    const json = await res.json()
-    const rows = Array.isArray(json.data) ? json.data : []
-    allGames.value = rows.map(game => {
-      const tags = Array.isArray(game.tags) ? game.tags : (typeof game.tags === 'string' && game.tags ? game.tags.split(',') : [])
+    const res = await fetch('http://localhost:3000/api/games');
+    const data = await res.json();
+
+    allGames.value = data.map(game => {
+      const tags = Array.isArray(game.tags) ? game.tags : [];
+      const ratings = Array.isArray(game.ratings) ? game.ratings : [];
+
+      const avg = (typeof game.averageRating === 'number' && !isNaN(game.averageRating))
+        ? Number(game.averageRating)
+        : (ratings.length ? ratings.reduce((s, r) => s + (r.rating||0), 0) / ratings.length : 0);
+
       return {
         id: game.id,
         title: game.title,
         slug: game.slug,
         description: game.description,
         releaseYear: game.releaseYear,
-        coverImage: game.coverUrl || game.coverImage || '',
-        averageRating: Number(game.averageRating || game.average_rating || 0),
-        ratingsCount: Number(game.ratingsCount || game.ratings_count || 0),
-        ratings: game.ratings || [],
-        popularityScore: Number(game.popularityScore || game.popularity_score || 0),
+        coverImage: game.coverUrl || game.coverImage || '', 
+        averageRating: Number(avg) || 0,
+        ratingsCount: Number(game.ratingsCount || ratings.length || 0),
+        ratings, 
+        popularityScore: Number(game.popularityScore || 0),
         tags,
         genres: tags.filter(t => ['RPG','Akcja','Przygodowa','Strategiczna','Symulacyjna','Platformowa','Indie','Sandbox','Survivalowa','Hack and Slash','Western','Souls-like','Eksploracjna'].includes(t)),
         platforms: tags.filter(t => ['PC','PlayStation 5','PlayStation 4','Xbox Series X','Xbox One','Nintendo Switch','Mobile'].includes(t))
-      }
-    })
-    if (json.meta) {
-      meta.value = json.meta
-      currentPage.value = json.meta.page || currentPage.value
-      itemsPerPage.value = json.meta.limit || itemsPerPage.value
-    }
+      };
+    });
+
   } catch (err) {
     console.error('Błąd pobierania gier:', err);
   }
-}
+});
 
-onMounted(() => {
-  loadGames()
+
+
+// Filtrowanie i sortowanie (muszą być na poziomie skryptu, nie w onMounted)
+const filteredAndSortedGames = computed(() => {
+  let filtered = [...allGames.value]
+
+  if (selectedGenres.value.length) {
+    filtered = filtered.filter(game =>
+      game.genres.some(genre => selectedGenres.value.includes(genre))
+    )
+  }
+
+  if (selectedPlatforms.value.length) {
+    filtered = filtered.filter(game =>
+      game.platforms.some(platform => selectedPlatforms.value.includes(platform))
+    )
+  }
+
+  if (selectedYear.value !== 'Wszystkie') {
+    filtered = filtered.filter(game => game.releaseYear === Number(selectedYear.value))
+  }
+
+  filtered.sort((a, b) => {
+    switch (sortBy.value) {
+      case 'popularity': return (b.popularityScore || 0) - (a.popularityScore || 0)
+      case 'rating': return (b.averageRating || 0) - (a.averageRating || 0)
+      case 'year-desc': return b.releaseYear - a.releaseYear
+      case 'year-asc': return a.releaseYear - b.releaseYear
+      default: return 0
+    }
+  })
+
+  return filtered
 })
 
-watch([selectedGenres, selectedPlatforms, selectedYear, sortBy, currentPage], () => {
-  currentPage.value = Number(currentPage.value) || 1
-  loadGames()
-})
+const totalPages = computed(() =>
+  Math.ceil(filteredAndSortedGames.value.length / itemsPerPage.value)
+)
 
-
-const totalPages = computed(() => Math.ceil((meta.value.total || 0) / itemsPerPage.value))
-const paginatedGames = computed(() => allGames.value)
+const paginatedGames = computed(() =>
+  filteredAndSortedGames.value.slice(
+    (currentPage.value - 1) * itemsPerPage.value,
+    currentPage.value * itemsPerPage.value
+  )
+)
 </script>
 
 <template>
