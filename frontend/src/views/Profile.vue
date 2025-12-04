@@ -19,11 +19,14 @@ import Button from '../components/ui/Button.vue'
 import Badge from '../components/ui/Badge.vue'
 
 import EditUserModal from '../components/ui/EditUserModal.vue'
+import ManageListsModal from '../components/ui/ManageListsModal.vue'
+
 import { User, Mail, Calendar, Edit, Lock, Unlock } from 'lucide-vue-next'
 
 import { mockGames, mockGameLists, mockRatings } from '../utils/mockData'
 
 const selectedList = ref(mockGameLists[0])
+const lists = ref([...mockGameLists])
 
 const user = {
   displayName: 'Jan Kowalski',
@@ -32,13 +35,14 @@ const user = {
 }
 
 const editModalOpen = ref(false)
+const manageListsOpen = ref(false)
 
 const userRatings = computed(() =>
     mockRatings.filter(r => r.userId === '1')
 )
 
 const userGamesInLists = computed(() =>
-    mockGameLists
+    lists.value
         .flatMap(list => list.gameIds.map(id => mockGames.find(g => g.id === id)))
         .filter(Boolean)
 )
@@ -65,7 +69,6 @@ const currentTab = ref('lists')
             </CardHeader>
 
             <CardContent class="space-y-3">
-
               <div class="flex items-center gap-2 text-sm text-gray-600">
                 <Mail class="size-4" />
                 <span>{{ user.email }}</span>
@@ -87,7 +90,6 @@ const currentTab = ref('lists')
                   Edytuj profil
                 </Button>
               </div>
-
             </CardContent>
           </Card>
         </div>
@@ -103,12 +105,14 @@ const currentTab = ref('lists')
             <TabsContent value="lists" class="space-y-6">
               <div class="flex items-center justify-between">
                 <h2>Moje listy</h2>
-                <Button>Nowa lista</Button>
+                <Button @click="manageListsOpen = true">
+                  Zarządzaj listami
+                </Button>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card
-                    v-for="list in mockGameLists"
+                    v-for="list in lists"
                     :key="list.id"
                     class="cursor-pointer transition-shadow"
                     :class="selectedList.id === list.id ? 'ring-2 ring-purple-600' : ''"
@@ -184,7 +188,6 @@ const currentTab = ref('lists')
                 </CardContent>
               </Card>
             </TabsContent>
-
           </Tabs>
         </div>
       </div>
@@ -196,6 +199,13 @@ const currentTab = ref('lists')
         :currentDisplayName="user.displayName"
         :currentEmail="user.email"
         @save="(data) => console.log('Zapisano dane użytkownika:', data)"
+    />
+
+    <ManageListsModal
+        :open="manageListsOpen"
+        :lists="lists"
+        @update:open="manageListsOpen = $event"
+        @update:lists="lists = $event"
     />
   </div>
 </template>
