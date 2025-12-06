@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 import Navbar from '../components/layout/Navbar.vue'
 import GameCard from '../components/cards/GameCard.vue'
@@ -19,16 +19,33 @@ import Button from '../components/ui/Button.vue'
 import Badge from '../components/ui/Badge.vue'
 
 import { User, Mail, Calendar, Edit, Lock, Unlock } from 'lucide-vue-next'
-
 import { mockGames, mockGameLists, mockRatings } from '../utils/mockData'
 
 const selectedList = ref(mockGameLists[0])
 
-const user = {
-  displayName: 'Jan Kowalski',
-  email: 'jan.kowalski@example.com',
-  joinDate: '2023-01-15'
-}
+const user = ref({
+  displayName: 'Ładowanie...',
+  email: '',
+  joinDate: ''
+})
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/auth/me`, {
+      credentials: 'include'
+    });
+    if (!res.ok) {
+      user.value.displayName = 'Gość';
+      return;
+    }
+    const data = await res.json();
+    user.value.displayName = data.user.displayName || data.user.display_name || 'Brak imienia';
+    user.value.email = data.user.email || '';
+    user.value.joinDate = data.user.created_at ? data.user.created_at.split('T')[0] : '';
+  } catch (err) {
+    console.error(err);
+  }
+});
 
 const userRatings = computed(() =>
     mockRatings.filter(r => r.userId === '1')
@@ -42,6 +59,7 @@ const userGamesInLists = computed(() =>
 
 const currentTab = ref('lists')
 </script>
+
 
 <template>
   <div class="min-h-screen bg-gray-50">

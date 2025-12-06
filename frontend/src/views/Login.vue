@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
+
 import Card from '../components/ui/card/Card.vue'
 import CardHeader from '../components/ui/card/CardHeader.vue'
 import CardTitle from '../components/ui/card/CardTitle.vue'
@@ -12,14 +14,33 @@ import { Gamepad2 } from 'lucide-vue-next'
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()
 
-const handleSubmit = () => {
+const handleLogin = async () => {
   if (!email.value || !password.value) {
     alert('Wypełnij wszystkie pola')
     return
   }
 
-  alert('Zalogowano pomyślnie!')
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email: email.value, password: password.value })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || 'Błąd logowania');
+      return;
+    }
+
+    router.push('/profile');
+  } catch (err) {
+    console.error(err);
+    alert('Błąd sieciowy. Spróbuj ponownie.');
+  }
 }
 </script>
 
@@ -41,24 +62,24 @@ const handleSubmit = () => {
       </CardHeader>
 
       <CardContent>
-        <form @submit.prevent="handleSubmit" class="space-y-4">
+        <form @submit.prevent="handleLogin" class="space-y-4">
           <div class="space-y-2">
             <Label for="email">Adres e-mail</Label>
             <Input
-                id="email"
-                type="email"
-                v-model="email"
-                placeholder="twoj@email.pl"
+              id="email"
+              type="email"
+              v-model="email"
+              placeholder="twoj@email.pl"
             />
           </div>
 
           <div class="space-y-2">
             <Label for="password">Hasło</Label>
             <Input
-                id="password"
-                type="password"
-                v-model="password"
-                placeholder="••••••••"
+              id="password"
+              type="password"
+              v-model="password"
+              placeholder="••••••••"
             />
           </div>
 
